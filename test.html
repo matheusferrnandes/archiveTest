@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Archive Konsi — Crédito Consignado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#0A9F82; --green2:#0DC7A2; --green3:#0FE2B8;
+  --dgreen:#04513F; --ddgreen:#03261F;
+  --ink:#141514; --gray:#7C7C7C; --line:#E4E6E5;
+  --screen:#F5F6F6; --card:#FFFFFF; --soft:#F0F6F5; --softer:#EAF6F3;
+  --err:#FF6060; --errbg:#FFF1F1; --ok:#1EA853; --okbg:#DDFBE7; --warn:#F3A42E; --warnbg:#FEF9EC;
+  --r:14px; --rs:10px;
+  --shadow:0 1px 2px rgba(3,38,31,.04),0 8px 24px rgba(3,38,31,.06);
+  --shadow-lg:0 12px 40px rgba(3,38,31,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--screen);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Sora','Inter',sans-serif;line-height:1.2}
+a{color:var(--green);text-decoration:none}
+a:hover{text-decoration:underline}
+.shell{display:flex;min-height:100vh}
+.sidebar{width:288px;flex-shrink:0;background:var(--ddgreen);color:#fff;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:50;transition:transform .3s ease}
+.brand{padding:24px 22px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+.brand .logo{font-family:'Sora';font-weight:800;font-size:26px;letter-spacing:-.5px;display:flex;align-items:center;gap:11px}
+.brand .logo img{width:38px;height:38px;border-radius:9px;display:block;flex-shrink:0}
+.brand .logo .dot{width:11px;height:11px;border-radius:50%;background:var(--green3);box-shadow:0 0 16px var(--green3)}
+.brand .tag{font-size:11.5px;color:rgba(255,255,255,.55);margin-top:5px;letter-spacing:.3px;text-transform:uppercase;font-weight:500}
+.searchbox{padding:14px 16px;position:relative}
+.searchbox input{width:100%;padding:11px 14px 11px 38px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2390a89f' stroke-width='2' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E") no-repeat 13px center;color:#fff;font-family:inherit;font-size:13.5px}
+.searchbox input::placeholder{color:rgba(255,255,255,.4)}
+.searchbox input:focus{outline:none;border-color:var(--green2);background-color:rgba(255,255,255,.1)}
+.nav{flex:1;overflow-y:auto;padding:4px 12px 28px}
+.nav::-webkit-scrollbar{width:7px}.nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:8px}
+.nav-group{margin-top:16px}
+.nav-group .gl{font-size:10.5px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);padding:6px 12px;font-weight:600}
+.nav a.item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;color:rgba(255,255,255,.78);font-size:13.5px;font-weight:500;cursor:pointer;transition:.15s;text-decoration:none}
+.nav a.item:hover{background:rgba(255,255,255,.07);color:#fff;text-decoration:none}
+.nav a.item.active{background:var(--green);color:#fff;box-shadow:0 4px 14px rgba(10,159,130,.4)}
+.nav a.item .ic{width:18px;text-align:center;font-size:14px;opacity:.85}
+.main{margin-left:288px;flex:1;min-width:0}
+.content{max-width:1080px;margin:0 auto;padding:46px 48px 90px}
+.page{display:none;animation:fade .35s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.crumb{font-size:12.5px;color:var(--gray);font-weight:600;letter-spacing:.4px;text-transform:uppercase;margin-bottom:10px}
+.page h1{font-size:38px;font-weight:800;letter-spacing:-1px;color:var(--ddgreen)}
+.lead{font-size:16.5px;color:#3c4a45;margin-top:14px;max-width:780px}
+.section{margin-top:40px}
+.section>h2{font-size:23px;font-weight:700;color:var(--dgreen);margin-bottom:6px;display:flex;align-items:center;gap:11px}
+.section>h2::before{content:"";width:5px;height:23px;border-radius:4px;background:linear-gradient(var(--green2),var(--green));display:inline-block}
+.section>h3{font-size:17px;font-weight:700;color:var(--ink);margin:26px 0 10px}
+.section p{margin:10px 0;color:#33403b;font-size:14.8px}
+.section ul{margin:10px 0 10px 4px;list-style:none}
+.section ul li{position:relative;padding:4px 0 4px 22px;font-size:14.6px;color:#33403b}
+.section ul li::before{content:"";position:absolute;left:2px;top:13px;width:7px;height:7px;border-radius:50%;background:var(--green2)}
+.hero{background:linear-gradient(135deg,var(--ddgreen),var(--dgreen));border-radius:22px;padding:44px 46px;color:#fff;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(15,226,184,.28),transparent 70%)}
+.hero h1{font-size:40px;color:#fff;position:relative}
+.hero p{font-size:16.5px;color:rgba(255,255,255,.82);margin-top:16px;max-width:660px;position:relative}
+.hero .pill{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:5px 13px;border-radius:30px;font-size:12px;font-weight:600;letter-spacing:.5px;margin-bottom:18px;position:relative}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:18px;margin-top:30px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.tile:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--green2)}
+.tile .ti{width:46px;height:46px;border-radius:12px;background:var(--softer);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px}
+.tile h3{font-size:16.5px;font-weight:700;color:var(--ddgreen)}
+.tile p{font-size:13.3px;color:var(--gray);margin-top:6px;line-height:1.45}
+.tile .arr{position:absolute;right:18px;bottom:16px;color:var(--green);opacity:0;transition:.2s;font-size:18px}
+.tile:hover .arr{opacity:1;transform:translateX(3px)}
+.box{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px 24px;margin:16px 0;box-shadow:var(--shadow)}
+.note{border-left:4px solid var(--green2);background:var(--soft);border-radius:8px;padding:14px 18px;margin:16px 0;font-size:14.3px;color:#2c3a35}
+.note.warn{border-color:var(--warn);background:var(--warnbg)}
+.note.err{border-color:var(--err);background:var(--errbg)}
+.note.ok{border-color:var(--ok);background:var(--okbg)}
+.note b{color:var(--ddgreen)}
+.note .nt{font-weight:700;display:block;margin-bottom:4px;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin:16px 0}
+.fact{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px 17px}
+.fact .k{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);font-weight:600}
+.fact .v{font-size:15px;font-weight:700;color:var(--ddgreen);margin-top:4px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 11px;border-radius:30px;font-size:12px;font-weight:600}
+.b-green{background:var(--okbg);color:var(--ok)}
+.b-red{background:var(--errbg);color:var(--err)}
+.b-amber{background:var(--warnbg);color:#b9791a}
+.b-gray{background:#eef0ef;color:var(--gray)}
+.b-blue{background:#E7F2FB;color:#1f7fc4}
+.tw{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:14px;background:var(--card)}
+thead th{background:var(--green);color:#fff;text-align:left;padding:12px 15px;font-weight:600;font-size:13px}
+tbody td{padding:11px 15px;border-top:1px solid var(--line);color:#33403b;vertical-align:top}
+tbody tr:nth-child(even){background:#fafbfb}
+tbody tr:hover{background:var(--softer)}
+td strong{color:var(--ddgreen)}
+.acc{border:1px solid var(--line);border-radius:12px;margin:10px 0;overflow:hidden;background:var(--card)}
+.acc summary{padding:15px 18px;font-weight:600;font-size:14.8px;color:var(--ddgreen);cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.acc summary::-webkit-details-marker{display:none}
+.acc summary::after{content:"+";font-size:21px;color:var(--green);font-weight:400;transition:.2s;flex-shrink:0}
+.acc[open] summary::after{transform:rotate(45deg)}
+.acc summary:hover{background:var(--soft)}
+.acc .body{padding:2px 18px 18px;font-size:14.3px;color:#33403b}
+.acc .body p{margin:8px 0}
+.steps{counter-reset:s;margin:18px 0}
+.step{position:relative;padding:0 0 22px 52px;border-left:2px solid var(--line);margin-left:16px}
+.step:last-child{border-left:2px solid transparent}
+.step::before{counter-increment:s;content:counter(s);position:absolute;left:-16px;top:-2px;width:32px;height:32px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;box-shadow:0 3px 10px rgba(10,159,130,.35)}
+.step h4{font-size:14.8px;color:var(--ddgreen);margin-bottom:3px}
+.step p{font-size:14px;color:#3c4a45;margin:0}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:16px 0;padding:18px;background:var(--card);border:1px solid var(--line);border-radius:var(--r)}
+.flow .fp{background:var(--softer);border:1px solid var(--green3);color:var(--dgreen);padding:8px 14px;border-radius:30px;font-size:13px;font-weight:600;white-space:nowrap}
+.flow .fp.end{background:var(--green);color:#fff;border-color:var(--green)}
+.flow .ar{color:var(--green2);font-weight:800;font-size:16px}
+.conv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px;margin:18px 0}
+.conv{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:.2s}
+.conv:hover{border-color:var(--green2);box-shadow:var(--shadow);transform:translateY(-2px)}
+.conv .cf{font-size:24px;margin-bottom:6px}
+.conv .cn{font-weight:700;font-size:13.5px;color:var(--ddgreen)}
+.conv .cb{font-size:11px;color:var(--gray);margin-top:3px}
+.bank-tools{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}
+.bank-tools input{flex:1;min-width:240px;padding:12px 16px;border:1px solid var(--line);border-radius:11px;font-family:inherit;font-size:14.5px;background:var(--card)}
+.bank-tools input:focus{outline:none;border-color:var(--green2);box-shadow:0 0 0 3px rgba(13,199,162,.15)}
+.bank-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.bcard{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px 18px;box-shadow:var(--shadow)}
+.bcard h4{font-size:15.5px;color:var(--ddgreen);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.bcard .code{font-size:11px;font-weight:600;background:var(--softer);color:var(--dgreen);padding:2px 9px;border-radius:20px;white-space:nowrap}
+.bcard .row{display:flex;gap:8px;font-size:13px;margin-top:7px;color:#3c4a45;align-items:baseline}
+.bcard .row .lab{color:var(--gray);min-width:90px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.3px;flex-shrink:0}
+.bcard .row .val{font-weight:600;color:var(--ink);word-break:break-word}
+.no-res{padding:40px;text-align:center;color:var(--gray);grid-column:1/-1}
+.sector-block{margin:22px 0}
+.sector-head{display:flex;align-items:center;gap:12px;padding:13px 18px;border-radius:12px 12px 0 0;color:#fff;font-weight:700;font-size:16px;font-family:'Sora'}
+.sector-body{border:1px solid var(--line);border-top:none;border-radius:0 0 12px 12px;padding:8px 18px 16px;background:var(--card)}
+mark{background:var(--green3);color:var(--ddgreen);padding:0 2px;border-radius:3px}
+.menu-btn{display:none}.topbar{display:none}.backdrop{display:none}
+@media(max-width:980px){
+  .sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}.content{padding:74px 18px 70px;max-width:100%}
+  .topbar{display:flex;align-items:center;gap:12px;position:fixed;top:0;left:0;right:0;height:58px;background:var(--ddgreen);color:#fff;z-index:40;padding:0 16px}
+  .topbar .tlogo{font-family:'Sora';font-weight:800;font-size:19px}
+  .menu-btn{display:flex;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:6px}
+  .menu-btn span{width:22px;height:2.5px;background:#fff;border-radius:2px}
+  .backdrop.show{display:block;position:fixed;inset:0;background:rgba(3,38,31,.5);z-index:45}
+  .page h1{font-size:29px}.hero{padding:30px 22px}.hero h1{font-size:28px}
+}
+
+/* ---- Placeholders de print / link (Ferramentas de Atendimento) ---- */
+.ph{border:2px dashed var(--green);border-radius:12px;background:#fafbfb;padding:26px 20px;text-align:center;color:var(--gray);font-size:13.5px;font-style:italic;margin:14px 0}
+.ph b{color:var(--ddgreen);font-style:normal}
+.ph .ph-ic{font-size:22px;display:block;margin-bottom:6px;font-style:normal}
+.win-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+@media(max-width:760px){.win-grid{grid-template-columns:1fr}}
+.win{border-radius:12px;padding:18px 20px;border:1px solid var(--line)}
+.win.openw{background:var(--okbg);border-color:var(--ok)}
+.win.closedw{background:#FFF1F1;border-color:#FF6060}
+.win h4{margin:0 0 8px;font-size:15px}
+.win.openw h4{color:#0E7A3A}
+.win.closedw h4{color:#C03030}
+.win p{font-size:13.5px;margin:0 0 6px;color:#3c4a45}
+
+/* ---- Playbooks ---- */
+.msg{background:#F0F6F5;border-left:3px solid var(--green2);border-radius:0 10px 10px 0;padding:12px 16px;margin:10px 0;font-size:13.8px;color:#2e3b36;font-style:italic}
+.dn-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+@media(max-width:760px){.dn-grid{grid-template-columns:1fr}}
+.dn{border-radius:12px;padding:16px 18px;border:1px solid var(--line)}
+.dn.do{background:var(--okbg);border-color:var(--ok)}
+.dn.dont{background:#FFF1F1;border-color:#FF6060}
+.dn h4{margin:0 0 8px;font-size:14px}
+.dn.do h4{color:#0E7A3A}
+.dn.dont h4{color:#C03030}
+.dn ul{margin:0;padding-left:18px}
+.dn li{font-size:13.3px;color:#3c4a45;margin:4px 0}
+.robot{border-radius:12px;border:1px solid var(--line);padding:16px 18px;margin:12px 0}
+.robot h4{margin:0 0 6px;font-size:15px}
+.robot p{font-size:13.8px;margin:0 0 6px;color:#3c4a45}
+.robot.rv{background:var(--okbg);border-color:var(--ok)}
+.robot.rv h4{color:#0E7A3A}
+.robot.ry{background:var(--warnbg);border-color:var(--warn)}
+.robot.ry h4{color:#B47511}
+.robot.rr{background:#FFF1F1;border-color:#FF6060}
+.robot.rr h4{color:#C03030}
+.pilares{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin:14px 0}
+.pilar{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.pilar h4{font-size:14px;color:var(--ddgreen);margin:0 0 4px}
+.pilar p{font-size:12.8px;color:#3c4a45;margin:0}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><div class="logo"><img src="data:image/webp;base64,UklGRrANAABXRUJQVlA4TKQNAAAvmoFmADXZerb9vG3n+3+KPbFs27Ztm3Ptj6C1399vZ7zl2DbqdqW2bftfa6PmrG27o+6/tt1Rr+Sf9mglM7Wf2rat59+4HUm5UhtHGrs6dWeyDzWPdlZqu12rtttZY9a2bdu2bdtWIAYAQKDpX9u2bdds2/aybdtW2EhSQv9t8ri78/2fgKGANOj/oP+D/g/6P+j/oP+D/g/6P+j/IB9jIRALgxGBDHielS6UJh4Odd5abpG2XxaKaJvZJRxeZzLiefPQHBpA8kq09fJIdJfGhc7k5Mr2+QPrDQWixSyux+BDZwoodLf2g/ViwLTcXuw9Q6jMyGU2Q+8JwnpxCFb7uQ69RKhMLBSq35aEOYH10mN5E++MQmXSo1nD345htllWqmiT3hhmbclKE20yB/bLI9ZdWw8q4+QWqc71C+sNBYKiJtuj/6Ezxa2u5+DDejEgWuEwJUwRKjNFpeN0flgvHgG1nmqfBYHKJNV5rcmwXnoMa+wZQy8JVOYmLSMTw9NK622XOxieapKTq9oXDux35M61C50pqDZdOx/2K2J0PYYIlYkBwxp6TxHWiwXTCgcxYY5Qme3OKxXWi4NBrefaZ45QmZU3cnYf1suAYU28A31VQbLSZevURt+1Sza6OAz6bmG9VY/cQtW5fmG/73apX/TlAiqjHM64PUcI+xWzup7DD5X5Z8WTFIb1YiG0/EEKQ2Xi4FDnpUZhvTgorflY+ywJVCYTkbeILIyQtsiAZU39EyOkZuRgy/bFC/ut91LQmb926zzY79KdGw8qEwOma7gOrOcVNdkfQ2XuVe22pMJ6XoX9eB2oTHoUNHYPH9ab6M8uVGa9rZMbAo07ZWPP9KEyt10M7JeFzHcHiQrhvbDX6MN+R+7avFCZGAhsPAzrOUUtLgUqM1Gd9xaF9WLAMFYqVCYzkbcITR/Wi4OzP7tQmews2aF4INeclTfxjChUppDGdOs+2G9+bdMbgjVh5DJbodcYYT1n3Z+Gymy32lXus0DY77E7hMqs/NUQboRX8SilQmUud3PYb6s17ooLlbn0SWC/dGj2aojXAa+o2T0P9lvvYaAyi9n332G/PELVqXqhMkn1PlofAIH1QkWM9qxQmUwk0Tw4YaastZbfDWGYGM0v1wFfNqY8Bszs1v2XkzRyrccyKxh5uqRAr6DG9ug9mNk2ey5Hwf2auDuMPH/FwxhiYO+9Y4YwMrGpb2TAcQrOQhVtkgtGnrW4zXkM7Keodp1dmLnRJArOzZed6xdGLn3dDPBX3tg1fBjZa4Jlt4NHwcVM9qww8jDZaIIBfmaKuBTM7N55hQ3Oody0crvxOjDRbxqYN2GAn1esPg0zO1VODo6i4EjNhxKFicm1X2qEgX77/IGRfvPwykziFHzuJr4ZhYnh+ayVAX/H8jEiWu+rpUMxCh48Ixg5w+U5VJnzVzpJHgXnEal/wchPL5UaaMIOx/Uo1ytisCkwcjYDqDNdGm8aSj5uGEau/WXUmRkNpuCJFurCxOQ9RKgy0UbOsXIK/nVjZ/dhYrjiUVwrVWZW1W7Kdin4TIeBkWc9p0OVmWGptTAyBa/7JDDyJEulIor6+l8p2Bmpe+/DyEdlZUjqTLv8GUjBaWO9CSb6TbwjHRKoMtFm/pGRwCk4stFZwcQhG52IOvPIJAr+5Gl8mJiwIOX3YhpV5oTH9Sh4vYeBkU8qarRURyHd+7+IyYUoOJdAfRpGfvrS1JnO1ZOTpyj53Skw8lFZqZw6M+acKDit/EG6Doxs9N/PTZVJbPDTHkrBkZ8PgYmz2kOEKpMww8rn2aPglTdxDxgZLrcTQlSZHxe3eY+CB1wKRu5wyTFASpWZPJ9MU/IcOlcvjOxcf3lEimo5ArVJ7QEUHBrpeTCydWrPiSrj7uXcFBwDhuNeBya6r94/VSZa47ZEKHiKPQyBkT+PgwJV5oSlN8LIFPyyV/sw8Xllt8LIVJmvF9JaSh7cOrlh5FFHcqgyHUo3O1NQ8nf/BSNPkpOrqJ19q1lg9qdg590fhJGt4mswdabOW4tHMgr23hGGkSs5N1UmXPEoUnLkZC5MPHj1u5JGldnhOWOAVNKgV7sw8Tp3TaPKnCS3QFHyD1onFoxMWTJ1dPi1jK0fUPJ3O9cvjPxdLr6iyriN/vouKdgprDUfhIl+69SeE1UmtepFSqPg0FhhGNngtw+iyvQa/52PTMHf//msYGLCgqzzLVSZWeZXGkoe1PB/+DCx94yU3Ykhqsyj1kvJc2qb3TDySQunqg6b29Q7+lFyFgo/BozsWLm5+Ioq49a8L9+n5HPPCEYe6AdUmefddWRKTmv412Gi29A54hFAlenefYV11qHokqveN2FI9escocrcJwdHUvaApcPAcKl171Fj/LusicLrvjcYeNoHU2N/F6332dIhgcKzMUTvyTegU+3m5Eqq7B337VG4U/OhQn6L6MpE4NTZZ3iUvsu3iovW/+7nppZfE9ITFqT6TX4v1fzP0p5Xaj2EqObeXIUd9a8h6vlNvi5r7Tk5kpq+qE9I8q99E6r6LyHYb/DdBlHXjyDo4Kt9L6dl8bv+1PYlC0K77M7GkNq21D4AIghd2y+/Qju69uAZSkLP0R/XU7VPdmk+UUiYYeXT5Gka7yILbt23+ixN+4Iw4D8ZcFzRNulKQ4fSebDaVL3I/cRNsXhxeHh+uXaU5neLz0wW0lh6M/jicNYbOEqDt/5S2rN2Lw/Jj5lCaZBS3O49WdxTHwCRh+T/x8GZ0iC14nFaq6yJWkaXAcAyT6k0cOt/tUGiuMkfm4D2xbtJpYHfMjIvLoql1nyqCVh6PolSGuB3ufhKFKtcZN8EzPC1IaVByqlCkqaocV9cE3D+1U6hNLjOGUKCGHpMqgmI1nlrSUqD5NNFBJHL6zH8JgDXvrjSALfKiGeSnLxSPbkR6FA4m9Qa3PG9gsiB7XLbCJy2gNJoDZb+EkcQ02PZPHwTEC654kdWGvQc/duEBHH8zbsmIGGGVc5zLIQqDZKrXpUpBHGtD0w1Ae7Zn6U0cK93bkEMHWeHJgDL/LvSAG1SKxOJCyLzyU3X9jMCexmoNfjXNJI4YDZGoHvvL1xrkLKdkCDepKlvGIGeY9yTpzRIWJAKhylNECf6pmsCkg/6XqWB+/9nCaK377AJiDb46btUGvh7u4kgjvzCGZoAv2V09lcaoGPpLEoQmU+q/2UC0KF0H6s1OOobYoBUELMzxGGMwNL/6igNnvcORxAz4PjejMAJV+ooDdxHRgQxUvu5RE1A8s7SlAb+qzPimCC+dyafMAHRfT5UaYDDrFcQWcLmeo7QBOBD79IabPUljiDmEesuzWcEOtXeY7UGZ12pJ4jZmXIbRuC0b3CUBsmz+6cgfrWpbxiB6/zPUxq4DX7auQUx8s0hJmBWT4soDXCgNQniFF8YYgLchr8tSWtwku8KYugGyzcBaJXYmclca3DU7YTkkPkVpkvrGYGd5OJJrUHvGZY/iDFgEMSBxzACT/qr1sA93fiC2G8eRiB8hpGVBmgWmDcRxE9u3jUBB19nLAy0BpPl4ChB9CqfpUQTgOsN0hp8vYDahuTQu8HyjfBbJ/cbtQY3XUNIDp2XnNYE4D4X0RokXyUihxzYLreNQI/+W7LWwG3k7P0E8SbNQitqAsL/S1MaYHdZKFwQk+p+NCNw8J29V2sw+S8FcTHnnJUJ8E9zbgV4tW8EUkrY3c3l0Cmx4pdvArDCwYHfszZvBoZ84b1yyHxyvVUjsOk5BHxM23jYCLjbGiSI2RhyNkYgZaRQoEfnOMs3Av75MuGZIF68WXD6JuCE5XZCKNAjv9ul8YwAXrllQZzom64JwP0iAR+z0uWMzEBKYYO9uRyutdJpPr8RbiPnWHnAx1/fygyErxySQ2/cRBOAGa0p4GMMmN4v1Qi4zxBEHvlQRqBz/a434GNamQ1/HSNwZFG81x2NwMIDPzoFtXZ0+/GUd1Ea8kvti8d+jEewOi81WWmYEc/G9K3HKR6TqDSMR8DpotYjL7x8peE/r/4J+znzPq3SkMVtvufoW4+81zG0hltejP248rdrDdfbJrXsx6QlukrDla/afvznF1KVhmn3e5P16D3jrErDGDCs4RLWIzc2udLQOf7o9mNWutyA0pBfap/f9uNN3u4rDfuPaT8+q+5n85WGkW+61iO/kKg0nKLCUUq0XwyYfnz5SkMWt7jlW4/MJzen1RoudW/248BtaA0HHMZ+/OqYvtLw3A3/u/04/lOiSsPIOt9kPU7xmESl4cjvuI71GCq16nuNUWnIje3VeuQvt6o1zMFV37If97MBreGamoem/XjxK2oNJ/pmsvUY+b+rNPznvhOtxykqn+U39Z3t6AdDy9uh9ejt/Hl9ZecKQk6zaeuRGzuU1vByj7IfN7lAreGgY/nWY7/moaU1nKjabUm1Hj+5RFdpGJpj2HpMm92slIYsoNRbtR6dEna/fK3hl45hPTonP63W8OJ7sx6ZgyUn0xombT7Zeux/F19pGAuhG0+0Hpd29qjS0Hn38q3HtC/MSmnIvGJ1EuvRW+nLtIbrvZT1yOM/W2v4yQu61uP8JtMaTlT9Js/KelzT3nyloXfEsPX4rLqf3VcaOh8baD0uZrX3UJoRR2+iaWEE/R/0f9D/Qf8H/R/0f9D/Qf8H/T99UwM=" alt="Konsi">Konsi</div><div class="tag">Archive</div></div>
+  <div class="searchbox"><input type="text" id="globalSearch" placeholder="Buscar na base…" autocomplete="off"></div>
+  <nav class="nav" id="nav">
+    <div class="nav-group"><div class="gl">Início</div>
+      <a class="item" data-page="home"><span class="ic">⌂</span>Página inicial</a>
+      <a class="item" data-page="geral"><span class="ic">◎</span>Conceitos gerais</a>
+    </div>
+    <div class="nav-group"><div class="gl">Ferramentas de Atendimento</div>
+      <a class="item" data-page="konsigleads"><span class="ic">▦</span>Konsigleads (CRM)</a>
+      <a class="item" data-page="colmeia"><span class="ic">✆</span>ColmeIA (WhatsApp)</a>
+      <a class="item" data-page="intercom"><span class="ic">✉</span>Intercom (App)</a>
+    </div>
+    <div class="nav-group"><div class="gl">Playbooks · Atendimento</div>
+      <a class="item" data-page="pb-emprogresso"><span class="ic">▣</span>Atendimento Em Progresso</a>
+      <a class="item" data-page="pb-robo"><span class="ic">⚙</span>Robô de Status</a>
+    </div>
+    <div class="nav-group"><div class="gl">Convênios Públicos</div>
+      <a class="item" data-page="bahia"><span class="ic">◆</span>Governo da Bahia</a>
+      <a class="item" data-page="saopaulo"><span class="ic">◆</span>Governo de São Paulo</a>
+      <a class="item" data-page="prefsp"><span class="ic">◆</span>Prefeitura de São Paulo</a>
+      <a class="item" data-page="minas"><span class="ic">◆</span>Governo de Minas Gerais</a>
+      <a class="item" data-page="rio"><span class="ic">◆</span>Governo do Rio de Janeiro</a>
+      <a class="item" data-page="pernambuco"><span class="ic">◆</span>Governo de Pernambuco</a>
+      <a class="item" data-page="alagoas"><span class="ic">◆</span>Governo de Alagoas</a>
+      <a class="item" data-page="comparar"><span class="ic">⊞</span>Comparar convênios</a>
+    </div>
+    <div class="nav-group"><div class="gl">CLT</div>
+      <a class="item" data-page="clt"><span class="ic">◈</span>Empréstimo privado (CLT)</a>
+    </div>
+    <div class="nav-group"><div class="gl">Operação</div>
+      <a class="item" data-page="status"><span class="ic">⟳</span>Status da proposta</a>
+      <a class="item" data-page="formalizacao"><span class="ic">✎</span>Formalização / Assinatura</a>
+      
+      <a class="item" data-page="automacoes"><span class="ic">🤖</span>Autodigitação por banco</a>
+      <a class="item" data-page="bancos"><span class="ic">☎</span>Canais dos bancos</a>
+    </div>
+  </nav>
+</aside>
+<div class="backdrop" id="backdrop"></div>
+<div class="main">
+  <div class="topbar"><button class="menu-btn" id="menuBtn"><span></span><span></span><span></span></button><div class="tlogo">Konsi</div></div>
+  <div class="content" id="content">
+<!-- ============ HOME ============ -->
+<section class="page active" id="page-home">
+  <div class="hero">
+    <span class="pill">Uso interno · Base RAG do Agente de IA</span>
+    <h1>Archive Konsi</h1>
+    <p>Tudo sobre Crédito Consignado — convênios públicos, CLT, status de propostas, formalização, canais dos bancos parceiros e as ferramentas de atendimento (Konsigleads, ColmeIA e Intercom). Esta base alimenta o Agente de IA e serve como documentação de consulta para novos colaboradores.</p>
+  </div>
+  <div class="section">
+    <h2>Navegue por área</h2>
+    <div class="cards">
+      <div class="tile" data-go="geral"><div class="ti">◎</div><h3>Conceitos gerais</h3><p>Margem, averbação, desconto em folha, taxas, garantias e processo de contratação.</p><span class="arr">→</span></div>
+      <div class="tile" data-go="comparar"><div class="ti">⊞</div><h3>Comparar convênios</h3><p>Tabela lado a lado: margem de segurança, token, anuência, data de corte e banco gestor.</p><span class="arr">→</span></div>
+      <div class="tile" data-go="status"><div class="ti">⟳</div><h3>Status da proposta</h3><p>Setores e status internos, com a nomenclatura correta para falar com o cliente.</p><span class="arr">→</span></div>
+      <div class="tile" data-go="formalizacao"><div class="ti">✎</div><h3>Formalização</h3><p>Assinatura digital, câmera, localização, anexo de documentos e situações especiais.</p><span class="arr">→</span></div>
+      <div class="tile" data-go="clt"><div class="ti">◈</div><h3>Empréstimo CLT</h3><p>Crédito do Trabalhador (MP 1.292/2025): FGTS, eSocial, portabilidade e FAQ.</p><span class="arr">→</span></div>
+      <div class="tile" data-go="konsigleads"><div class="ti">▦</div><h3>Konsigleads (CRM)</h3><p>Busca de propostas, funil de atendimento, troca de status, automações e histórico.</p><span class="arr">→</span></div>
+      
+      <div class="tile" data-go="automacoes"><div class="ti">🤖</div><h3>Autodigitação por banco</h3><p>Bancos com robô ativo e mapa de automações por convênio e tipo de operação.</p><span class="arr">→</span></div>
+      <div class="tile" data-go="colmeia"><div class="ti">✆</div><h3>ColmeIA (WhatsApp)</h3><p>Como o atendimento chega, janelas de 24h, chamadas ativas, macros e tags.</p><span class="arr">→</span></div>
+      <div class="tile" data-go="intercom"><div class="ti">✉</div><h3>Intercom (App)</h3><p>Mensageria dentro do aplicativo — o plano B quando o cliente não responde no WhatsApp.</p><span class="arr">→</span></div>
+      <div class="tile" data-go="pb-emprogresso"><div class="ti">▣</div><h3>Playbook: Em Progresso</h3><p>Documentos, cliente agressivo, proposta travada, cancelamento + conversão e boas práticas de áudio.</p><span class="arr">→</span></div>
+      <div class="tile" data-go="pb-robo"><div class="ti">⚙</div><h3>Playbook: Robô de Status</h3><p>Como a automação atualiza a esteira, os três estados (verde, amarelo, vermelho) e como agir em cada um.</p><span class="arr">→</span></div>
+      <div class="tile" data-go="bancos"><div class="ti">☎</div><h3>Canais dos bancos</h3><p>Telefones, SAC, ouvidoria e WhatsApp de 40+ bancos parceiros, com busca rápida.</p><span class="arr">→</span></div>
+    </div>
+  </div>
+  <div class="section">
+    <h2>Convênios públicos disponíveis</h2>
+    <div class="conv-grid">
+      <div class="conv" data-go="bahia"><div class="cf">🟢</div><div class="cn">Bahia</div><div class="cb">Banco do Brasil</div></div>
+      <div class="conv" data-go="saopaulo"><div class="cf">🟢</div><div class="cn">Gov. São Paulo</div><div class="cb">Banco do Brasil</div></div>
+      <div class="conv" data-go="prefsp"><div class="cf">🟢</div><div class="cn">Pref. São Paulo</div><div class="cb">Banco do Brasil</div></div>
+      <div class="conv" data-go="minas"><div class="cf">🟢</div><div class="cn">Minas Gerais</div><div class="cb">Itaú</div></div>
+      <div class="conv" data-go="rio"><div class="cf">🟢</div><div class="cn">Rio de Janeiro</div><div class="cb">Bradesco</div></div>
+      <div class="conv" data-go="pernambuco"><div class="cf">🟢</div><div class="cn">Pernambuco</div><div class="cb">Bradesco</div></div>
+      <div class="conv" data-go="alagoas"><div class="cf">🟢</div><div class="cn">Alagoas</div><div class="cb">SEFAZ-AL</div></div>
+    </div>
+  </div>
+  <div class="note"><span class="nt">Como usar esta base</span>Use a <b>busca no topo da barra lateral</b> para encontrar qualquer termo. Clique nos itens do menu para abrir cada área. As páginas de convênio têm sempre a mesma estrutura, para facilitar a comparação.</div>
+</section>
+
+<!-- ============ CONCEITOS GERAIS ============ -->
+<section class="page" id="page-geral">
+  <div class="crumb">Crédito Novo · Convênios Públicos</div>
+  <h1>Conceitos gerais</h1>
+  <p class="lead">Fundamentos do crédito consignado público: o que é, como a margem funciona, o que é averbação e como o desconto em folha acontece. Base comum a todos os convênios.</p>
+
+  <div class="section">
+    <h2>O que é o Crédito Novo</h2>
+    <p>É a modalidade em que o cliente faz uma <strong>nova contratação</strong> de crédito consignado, sem utilizar contratos anteriores ou substituir operações existentes. Cria-se um novo contrato, com prazo, valor e parcelas definidos na contratação.</p>
+    <p>O valor das parcelas é descontado automaticamente do salário ou benefício, direto na folha de pagamento. Esse mecanismo reduz o risco de inadimplência e permite taxas de juros menores do que outras modalidades.</p>
+    <p>É destinado a quem tem renda com possibilidade de desconto em folha — normalmente pensionistas do INSS, servidores públicos (federais, estaduais ou municipais) e militares.</p>
+  </div>
+
+  <div class="section">
+    <h2>Margem consignável</h2>
+    <p>A margem consignável é o <strong>limite máximo da renda mensal</strong> que pode ser comprometido com parcelas de operações consignadas. A margem livre é a parte que ainda não está sendo usada por contratos ativos.</p>
+    <div class="facts">
+      <div class="fact"><div class="k">Cálculo</div><div class="v">Sobre o salário líquido</div></div>
+      <div class="fact"><div class="k">Limite empréstimo</div><div class="v">Até 35% da renda líquida</div></div>
+      <div class="fact"><div class="k">Cartão consignado</div><div class="v">Até 5% adicionais</div></div>
+      <div class="fact"><div class="k">Sem margem livre</div><div class="v">Não é possível contratar</div></div>
+    </div>
+    <p>O salário líquido = bruto menos descontos obrigatórios (INSS e IRRF). Quando o empréstimo é aprovado, a parcela é registrada na margem por meio da <strong>averbação</strong> e fica reservada até a quitação.</p>
+  </div>
+
+  <div class="section">
+    <h2>Situações comuns</h2>
+    <details class="acc"><summary>Taxas e custos</summary><div class="body">
+      <p>A <b>taxa de juros</b> é o custo cobrado pela instituição financeira, aplicado mensalmente sobre o saldo devedor. A <b>taxa anual</b> é a equivalência ao longo de 12 meses, útil para comparação.</p>
+      <p>O <b>IOF</b> é cobrado em todas as operações de crédito, mas já está embutido no CET informado pelo banco.</p>
+      <p>O <b>seguro prestamista</b> pode existir dependendo do banco e produto, cobrindo situações como falecimento e invalidez permanente. Quando contratado, entra no cálculo do CET. Nem sempre está presente.</p>
+    </div></details>
+    <details class="acc"><summary>Prazos e condições</summary><div class="body">
+      <p>O prazo varia conforme banco e convênio, podendo ir de <b>36 a 120 meses</b>. As datas de corte da folha definem quando começa a cobrança: contratos averbados antes do corte entram no mês seguinte; os demais ficam para o mês posterior.</p>
+      <p>É direito do trabalhador <b>antecipar parcelas ou quitar integralmente</b> o contrato, com abatimento proporcional de juros futuros.</p>
+    </div></details>
+    <details class="acc"><summary>Averbação</summary><div class="body">
+      <p>Averbação é o processo em que a parcela é registrada oficialmente na folha de pagamento ou benefício do cliente, garantindo o desconto automático mensal.</p>
+      <p>Acontece <b>após a formalização do contrato</b> (assinatura). O banco envia a solicitação ao órgão pagador, que valida e registra a parcela na margem. Só após a averbação confirmada a operação passa para a liberação do pagamento.</p>
+    </div></details>
+    <details class="acc"><summary>Desconto em folha</summary><div class="body">
+      <p>O desconto é feito direto no pagamento mensal, antes do salário ser depositado. O <b>primeiro desconto</b> ocorre no primeiro ciclo de folha após a averbação, respeitando o fechamento da folha — em geral entre <b>30 e 60 dias</b> após a contratação.</p>
+      <p>Se houver período de carência, o desconto pode ser adiado, mas a parcela já fica reservada na margem.</p>
+    </div></details>
+  </div>
+
+  <div class="section">
+    <h2>Situações especiais</h2>
+    <div class="note warn"><span class="nt">Falecimento do cliente</span>A dívida não desaparece automaticamente. Com seguro prestamista, a seguradora quita o saldo. Sem seguro, a dívida pode ser cobrada do espólio (bens deixados), respeitando a sucessão. Os herdeiros <b>não respondem com patrimônio próprio</b>.</div>
+    <div class="note err"><span class="nt">Margem bloqueada</span>O cliente possui limite consignável, mas ele não está disponível para novas operações por bloqueio no sistema do órgão pagador. Não é possível registrar ou averbar uma nova proposta até a remoção do bloqueio.</div>
+  </div>
+
+  <div class="section">
+    <h2>Processo de contratação (app Konsi)</h2>
+    <div class="steps">
+      <div class="step"><h4>Acesso ao aplicativo</h4><p>Cliente acessa o app da Konsi e faz login com seus dados cadastrados.</p></div>
+      <div class="step"><h4>Simulação da proposta</h4><p>Realiza a simulação selecionando uma das opções; o app mostra valores estimados de parcela, prazo e valor liberado.</p></div>
+      <div class="step"><h4>Envio de documentos</h4><p>Após escolher a proposta, pode precisar enviar os documentos solicitados.</p></div>
+      <div class="step"><h4>Análise da proposta</h4><p>Análise operacional, validação das informações e digitação no sistema do banco.</p></div>
+      <div class="step"><h4>Assinatura do contrato</h4><p>Com a proposta aprovada, o cliente recebe a etapa de assinatura digital.</p></div>
+      <div class="step"><h4>Aguardar liberação</h4><p>Proposta contratada — aguardar validações do banco e liberação do valor em conta.</p></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Documentos necessários</h2>
+    <div class="tw"><table><thead><tr><th>Documento</th><th>Finalidade</th><th>Observação</th></tr></thead><tbody>
+      <tr><td><strong>RG ou CNH</strong> (frente e verso)</td><td>Identificação</td><td>Legível e dentro da validade</td></tr>
+      <tr><td><strong>Comprovante de renda / benefício</strong></td><td>Confirmar renda e margem</td><td>Contracheque ou extrato do benefício</td></tr>
+      <tr><td><strong>Extrato bancário</strong> (TED salarial)</td><td>Quando recebe em outra conta</td><td>Comprova o recebimento da TED salarial</td></tr>
+      <tr><td><strong>Extrato dos últimos 90 dias</strong></td><td>Quando a conta é de banco digital</td><td>Para validar a movimentação da conta</td></tr>
+    </tbody></table></div>
+  </div>
+
+  <div class="section">
+    <h2>Garantias, riscos e comparação</h2>
+    <p>A principal garantia é o <strong>desconto automático</strong> das parcelas na folha ou benefício, o que reduz o risco de inadimplência para o banco e permite juros menores. A operação fica registrada na margem por meio da averbação.</p>
+    <div class="tw"><table><thead><tr><th>Característica</th><th>Consignado Público</th><th>Crédito Pessoal</th><th>Cartão de Crédito</th><th>Cheque Especial</th></tr></thead><tbody>
+      <tr><td><strong>Taxa de juros</strong></td><td><span class="badge b-green">Muito baixa</span></td><td><span class="badge b-amber">Alta</span></td><td><span class="badge b-red">Muito alta</span></td><td><span class="badge b-red">Muito alta</span></td></tr>
+      <tr><td><strong>Parcelas</strong></td><td>Fixas</td><td>Fixas</td><td>Variáveis</td><td>Sem parcelas fixas</td></tr>
+      <tr><td><strong>Prazo</strong></td><td>Até 120 meses</td><td>Curto a médio</td><td>Rotativo</td><td>Rotativo</td></tr>
+      <tr><td><strong>Desconto em folha</strong></td><td>Automático</td><td>Automático</td><td>Não</td><td>Não</td></tr>
+      <tr><td><strong>Risco inadimplência</strong></td><td><span class="badge b-green">Muito baixo</span></td><td>Médio a alto</td><td>Alto</td><td>Alto</td></tr>
+    </tbody></table></div>
+  </div>
+
+  <div class="section">
+    <h2>Atendimento e Compliance</h2>
+    <p>O tratamento de dados segue a <strong>LGPD</strong>: finalidade legítima, transparência, segurança e minimização. O trabalhador tem direito a acesso e correção. Para reclamações, o caminho inclui SAC, ouvidoria, Consumidor.gov.br, Procon e Banco Central. O prazo de resposta é geralmente de <strong>10 dias úteis</strong>.</p>
+  </div>
+</section>
+<section class="page" id="page-bahia"><div class="crumb">Crédito Novo · Convênio Público</div><h1>Governo da Bahia</h1><p class="lead">Crédito consignado para servidores estaduais da Bahia. Banco gestor da folha: Banco do Brasil. Convênio sem margem de segurança, sem cálculo manual, sem token e sem anuência.</p><div class="section"><h2>Resumo do convênio</h2><div class="facts"><div class="fact"><div class="k">Banco gestor</div><div class="v">Banco do Brasil</div></div><div class="fact"><div class="k">Margem</div><div class="v">Até 35% da renda líquida</div></div><div class="fact"><div class="k">Data de corte</div><div class="v">Dia 16 de cada mês</div></div><div class="fact"><div class="k">Margem de segurança</div><div class="v">Não exige</div></div><div class="fact"><div class="k">Cálculo manual</div><div class="v">Não</div></div><div class="fact"><div class="k">Token</div><div class="v">Não exige</div></div><div class="fact"><div class="k">Anuência</div><div class="v">Não exige</div></div><div class="fact"><div class="k">Limite de operações</div><div class="v">Sem limite em folha / 4 contratos por banco</div></div></div></div><div class="section"><h2>Portais</h2><div class="box"><h3 style="font-family:Sora;color:var(--ddgreen);font-size:16px;margin-bottom:6px">Portal de Consignados — Consiglog</h3><p style="margin:6px 0;font-size:14.5px;color:#33403b">Consulta de margem consignável, contratos ativos e inativos.</p><a href="https://govbahia.consiglog.com.br/Login.aspx" target="_blank" rel="noopener">https://govbahia.consiglog.com.br/Login.aspx</a></div><div class="box"><h3 style="font-family:Sora;color:var(--ddgreen);font-size:16px;margin-bottom:6px">Portal do Servidor</h3><p style="margin:6px 0;font-size:14.5px;color:#33403b">Não centralizado — varia por lotação. Sem ação necessária no portal do servidor para crédito novo.</p></div></div><div class="section"><h2>Margem, segurança e cálculo</h2><p>A margem consignável destinada ao convênio é de <strong>35% da renda líquida</strong> para novos empréstimos. Se no momento da averbação o servidor não tiver margem suficiente, a proposta é cancelada automaticamente pelo banco.</p><div class="note ok"><span class="nt">Sem margem de segurança</span>Os bancos não solicitam margem de segurança — é possível usar 100% da margem consignável.</div><div class="note ok"><span class="nt">Sem cálculo manual</span>Os bancos não realizam nenhum tipo de cálculo manual neste convênio.</div></div><div class="section"><h2>Situações especiais</h2><div class="note err"><span class="nt">Margem bloqueada</span>Cliente tem margem, mas ela está restrita para novas contratações por regra do órgão pagador. Não é possível averbar até a remoção do bloqueio.</div></div><div class="section"><h2>Averbação</h2><p>Após a assinatura digital, o banco envia a solicitação ao portal de consignados. A averbação é feita de forma automática pelo banco — não é necessária anuência nem envio de token.</p></div><div class="section"><h2>Token / Confirmação</h2><p>Não é necessário token para confirmar a averbação. A averbação é automática após a assinatura digital.</p></div></section>
+<section class="page" id="page-saopaulo"><div class="crumb">Crédito Novo · Convênio Público</div><h1>Governo de São Paulo</h1><p class="lead">Crédito consignado para servidores estaduais de SP. Banco gestor: Banco do Brasil. Exige margem de segurança, cálculo manual e anuência via app SOU.SP (com prova de vida no Gov.br). Não usa token.</p><div class="section"><h2>Resumo do convênio</h2><div class="facts"><div class="fact"><div class="k">Banco gestor</div><div class="v">Banco do Brasil</div></div><div class="fact"><div class="k">Margem</div><div class="v">Até 35% da renda líquida</div></div><div class="fact"><div class="k">Data de corte</div><div class="v">Dia 12 de cada mês</div></div><div class="fact"><div class="k">Margem de segurança</div><div class="v">Sim (varia por banco)</div></div><div class="fact"><div class="k">Cálculo manual</div><div class="v">Sim</div></div><div class="fact"><div class="k">Token</div><div class="v">Não exige</div></div><div class="fact"><div class="k">Anuência</div><div class="v">Sim — via SOU.SP</div></div><div class="fact"><div class="k">Limite de operações</div><div class="v">Geralmente até 10 por consignatária</div></div></div></div><div class="section"><h2>Portais</h2><div class="box"><h3 style="font-family:Sora;color:var(--ddgreen);font-size:16px;margin-bottom:6px">Portal de Consignados — Serviço de Controle de Consignação</h3><p style="margin:6px 0;font-size:14.5px;color:#33403b">Consulta de margem consignável, contratos ativos e inativos.</p><a href="https://www.portaldoconsignado.com.br/home?0" target="_blank" rel="noopener">https://www.portaldoconsignado.com.br/home?0</a></div><div class="box"><h3 style="font-family:Sora;color:var(--ddgreen);font-size:16px;margin-bottom:6px">Portal do Servidor</h3><p style="margin:6px 0;font-size:14.5px;color:#33403b">SOU.SP — onde o cliente faz a autorização/anuência da consignação.</p><a href="https://www.sou.sp.gov.br/sou.sp" target="_blank" rel="noopener">https://www.sou.sp.gov.br/sou.sp</a></div></div><div class="section"><h2>Margem, segurança e cálculo</h2><p>A margem consignável destinada ao convênio é de <strong>35% da renda líquida</strong> para novos empréstimos. Se no momento da averbação o servidor não tiver margem suficiente, a proposta é cancelada automaticamente pelo banco.</p><div class="note warn"><span class="nt">Exige margem de segurança</span>Definida pelas instituições financeiras / regras do convênio. Varia conforme perfil, tipo de benefício e políticas de risco do banco. Reduz o risco de pequenas variações na renda comprometerem as parcelas.</div><div class="note warn"><span class="nt">Exige cálculo manual</span>Os bancos adotam cálculo manual como prevenção à inadimplência, levando em conta principalmente os proventos recebidos.</div></div><div class="section"><h2>Situações especiais</h2><div class="note warn"><span class="nt">Servidor com dois provimentos</span>Dois vínculos/matrículas ativas. Se um provimento tiver margem negativa, a operação pode ser cancelada automaticamente. Vínculo não elegível também gera cancelamento. Com margem positiva e vínculo elegível, segue normalmente.</div></div><div class="section"><h2>Averbação</h2><p>Após a assinatura digital, o banco envia a solicitação de averbação e solicita ao servidor a <b>anuência</b> da margem. A anuência é feita no app/portal SOU.SP, com login Gov.br, e a validação final (Prova de Vida) ocorre no app Gov.br.</p></div><div class="section"><h2>Anuência (SOU.SP) — passo a passo</h2><div class="note"><span class="nt">Importante</span>A anuência é feita no app/portal SOU.SP. A validação final (Prova de Vida) ocorre no app Gov.br, para garantir a identidade.</div><h3>Anuência no SOU.SP</h3><div class="steps"><div class="step"><p>Acesse o app SOU.SP e faça login com sua conta Gov.br.</p></div><div class="step"><p>Clique em “Consignação” e selecione “Aprovar consignação”.</p></div><div class="step"><p>Escolha o número do contrato (o mesmo da assinatura, disponível no app da Konsi).</p></div><div class="step"><p>Clique em “Autorizo” e depois em confirmar.</p></div><div class="step"><p>Você será redirecionado para a Prova de Vida no Gov.br.</p></div></div><h3>Prova de Vida no Gov.br</h3><div class="steps"><div class="step"><p>Acesse o app Gov.br com suas credenciais.</p></div><div class="step"><p>Na tela inicial, clique em “Prova de Vida”.</p></div><div class="step"><p>Selecione a solicitação com status pendente e verifique se o motivo é “Consignado”.</p></div><div class="step"><p>Autorize e realize a Prova de Vida.</p></div><div class="step"><p>Volte ao SOU.SP › Notificações para conferir a aprovação.</p></div></div><div class="note warn"><span class="nt">Dicas para a Prova de Vida</span>Ambiente bem iluminado · sem óculos, chapéu ou boné · celular na altura do rosto · evite pessoas ou objetos ao fundo.</div><div class="note"><span class="nt">Anuência indisponível no SOU.SP?</span>Significa que o banco ainda não liberou a funcionalidade. O recomendado é aguardar e tentar novamente mais tarde.</div><a href="https://www.sou.sp.gov.br/sou.sp/tutoriais/servidores-ativos/aprovar-consignacao" target="_blank" rel="noopener">Tutorial oficial de aprovação de consignação</a></div><div class="section"><h3>Autorização de consulta de margem</h3><p>Os bancos exigem que estejam liberadas a <strong>consulta da margem consignável</strong> e o acesso ao <strong>histórico de oscilação de margem</strong>, para validar as informações antes da aprovação. Sem essas permissões, a proposta pode ser interrompida. Podem ser autorizadas no Portal do Servidor ou no app SOU.SP.</p></div><div class="section"><h2>Token / Confirmação</h2><p>Não há token neste convênio. A autorização ocorre pela <b>anuência</b> feita pelo próprio servidor no SOU.SP, que substitui o token. Só após a anuência a operação segue para averbação definitiva.</p></div></section>
+<section class="page" id="page-prefsp"><div class="crumb">Crédito Novo · Convênio Público</div><h1>Prefeitura de São Paulo</h1><p class="lead">Crédito consignado para servidores municipais de São Paulo. Banco gestor: Banco do Brasil. Exige margem de segurança e cálculo manual, mas a averbação é automática (sem anuência, token ou prova de vida).</p><div class="section"><h2>Resumo do convênio</h2><div class="facts"><div class="fact"><div class="k">Banco gestor</div><div class="v">Banco do Brasil</div></div><div class="fact"><div class="k">Margem</div><div class="v">Até 35% da renda líquida</div></div><div class="fact"><div class="k">Data de corte</div><div class="v">Dia 25 de cada mês</div></div><div class="fact"><div class="k">Margem de segurança</div><div class="v">Sim (varia por banco)</div></div><div class="fact"><div class="k">Cálculo manual</div><div class="v">Sim (proventos do contracheque)</div></div><div class="fact"><div class="k">Token</div><div class="v">Não exige</div></div><div class="fact"><div class="k">Anuência</div><div class="v">Não exige</div></div><div class="fact"><div class="k">Limite de operações</div><div class="v">Geralmente até 10</div></div></div></div><div class="section"><h2>Portais</h2><div class="box"><h3 style="font-family:Sora;color:var(--ddgreen);font-size:16px;margin-bottom:6px">Portal de Consignados — Sistema oficial de controle de consignação</h3><p style="margin:6px 0;font-size:14.5px;color:#33403b">Consulta de margem consignável, contratos ativos e inativos.</p><a href="https://www.portaldoconsignado.com.br/home" target="_blank" rel="noopener">https://www.portaldoconsignado.com.br/home</a></div><div class="box"><h3 style="font-family:Sora;color:var(--ddgreen);font-size:16px;margin-bottom:6px">Portal do Servidor</h3><p style="margin:6px 0;font-size:14.5px;color:#33403b">Portal do Servidor da Prefeitura de SP</p><a href="https://www.prefeitura.sp.gov.br/cidade/secretarias/gestao/servidores" target="_blank" rel="noopener">https://www.prefeitura.sp.gov.br/cidade/secretarias/gestao/servidores</a></div></div><div class="section"><h2>Margem, segurança e cálculo</h2><p>A margem consignável destinada ao convênio é de <strong>35% da renda líquida</strong> para novos empréstimos. Se no momento da averbação o servidor não tiver margem suficiente, a proposta é cancelada automaticamente pelo banco.</p><div class="note warn"><span class="nt">Exige margem de segurança</span>Reserva parte da margem como proteção. O valor varia conforme o banco e não pode ser usado para contratação.</div><div class="note warn"><span class="nt">Exige cálculo manual</span>O valor simulado no app pode ser ajustado após análise do contracheque, com base nos proventos reais. Se mudar, o servidor é informado antes de assinar.</div></div><div class="section"><h3>Limites de comprometimento</h3><div class="tw"><table><thead><tr><th>Tipo</th><th>Percentual máximo</th><th>Observação</th></tr></thead><tbody><tr><td><strong>Empréstimos consignados</strong></td><td>Até 35% da renda líquida</td><td>Inclui todos os contratos ativos</td></tr><tr><td><strong>Cartão consignado</strong></td><td>Até 5% da renda líquida</td><td>Separado dos 35% de empréstimos</td></tr><tr><td><strong>Total comprometível</strong></td><td>Até 40% da renda líquida</td><td>Soma de empréstimos + cartão</td></tr></tbody></table></div></div><div class="section"><h2>Situações especiais</h2><div class="note warn"><span class="nt">Servidor com dois provimentos</span>Mesma regra do Gov. SP: margem negativa em um vínculo pode cancelar; vínculo não elegível também. Margem positiva + vínculo elegível segue no fluxo.</div><div class="note " style="border-color:#1f7fc4;background:#E7F2FB"><span class="nt">Autorização de consulta de margem</span>Os bancos exigem autorização de consulta de margem e de histórico de oscilação, liberadas pelo servidor no Portal do Servidor. Sem elas, a proposta pode ser bloqueada.</div></div><div class="section"><h2>Averbação</h2><p>A averbação é realizada <b>automaticamente</b> após a assinatura digital no app da Konsi. Não há etapa adicional de autorização, confirmação em portais externos, anuência, token ou prova de vida.</p></div><div class="section"><h2>Token / Confirmação</h2><p>Não exigido. Todo o processo ocorre automaticamente após a assinatura do contrato.</p></div></section>
+<section class="page" id="page-minas"><div class="crumb">Crédito Novo · Convênio Público</div><h1>Governo de Minas Gerais</h1><p class="lead">Crédito consignado para servidores estaduais de MG. Banco gestor: Itaú. Margem de segurança fixa de R$ 10,00 (pode variar por banco). Sem cálculo manual, sem token e sem anuência.</p><div class="section"><h2>Resumo do convênio</h2><div class="facts"><div class="fact"><div class="k">Banco gestor</div><div class="v">Itaú</div></div><div class="fact"><div class="k">Margem</div><div class="v">Até 35% da renda líquida</div></div><div class="fact"><div class="k">Data de corte</div><div class="v">Dia 12 de cada mês</div></div><div class="fact"><div class="k">Margem de segurança</div><div class="v">R$ 10,00 (varia por banco)</div></div><div class="fact"><div class="k">Cálculo manual</div><div class="v">Não</div></div><div class="fact"><div class="k">Token</div><div class="v">Não exige</div></div><div class="fact"><div class="k">Anuência</div><div class="v">Não exige</div></div><div class="fact"><div class="k">Limite de operações</div><div class="v">Geralmente até 10 por consignatária</div></div></div></div><div class="section"><h2>Portais</h2><div class="box"><h3 style="font-family:Sora;color:var(--ddgreen);font-size:16px;margin-bottom:6px">Portal de Consignados — Servidor.mg</h3><p style="margin:6px 0;font-size:14.5px;color:#33403b">Consulta de margem consignável, contratos ativos e inativos.</p><a href="https://www.portaldoservidor.mg.gov.br/home" target="_blank" rel="noopener">https://www.portaldoservidor.mg.gov.br/home</a></div><div class="box"><h3 style="font-family:Sora;color:var(--ddgreen);font-size:16px;margin-bottom:6px">Portal do Servidor</h3><p style="margin:6px 0;font-size:14.5px;color:#33403b">Servidor.mg — mesmo portal do de consignados. Acesso por CPF e senha ou via Gov.br.</p><a href="https://www.portaldoservidor.mg.gov.br/home" target="_blank" rel="noopener">https://www.portaldoservidor.mg.gov.br/home</a></div></div><div class="section"><h2>Margem, segurança e cálculo</h2><p>A margem consignável destinada ao convênio é de <strong>35% da renda líquida</strong> para novos empréstimos. Se no momento da averbação o servidor não tiver margem suficiente, a proposta é cancelada automaticamente pelo banco.</p><div class="note warn"><span class="nt">Margem de segurança de R$ 10,00</span>Exige margem de segurança de R$ 10,00, podendo variar conforme regras de cada banco.</div><div class="note ok"><span class="nt">Sem cálculo manual</span>Os bancos não adotam cálculo manual neste convênio.</div></div><div class="section"><h2>Averbação</h2><p>Após a assinatura digital, o banco envia a solicitação e confirma a averbação do valor da parcela de forma <b>automática</b>. Nenhuma ação do servidor é necessária; não há anuência.</p></div><div class="section"><h2>Token / Confirmação</h2><p>Não há token. A autorização é automática pelo banco no portal de consignados.</p></div></section>
+<section class="page" id="page-rio"><div class="crumb">Crédito Novo · Convênio Público</div><h1>Governo do Rio de Janeiro</h1><p class="lead">Crédito consignado para servidores estaduais do RJ. Banco gestor: Bradesco. Exige token (8 caracteres, alfanumérico) para confirmar a averbação. Sem margem de segurança e sem cálculo manual.</p><div class="section"><h2>Resumo do convênio</h2><div class="facts"><div class="fact"><div class="k">Banco gestor</div><div class="v">Bradesco</div></div><div class="fact"><div class="k">Margem</div><div class="v">Até 35% da renda líquida</div></div><div class="fact"><div class="k">Data de corte</div><div class="v">Dia 23 de cada mês</div></div><div class="fact"><div class="k">Margem de segurança</div><div class="v">Não exige</div></div><div class="fact"><div class="k">Cálculo manual</div><div class="v">Não</div></div><div class="fact"><div class="k">Token</div><div class="v">Sim — obrigatório</div></div><div class="fact"><div class="k">Anuência</div><div class="v">Não exige</div></div><div class="fact"><div class="k">Limite de operações</div><div class="v">Sem limite em folha</div></div></div></div><div class="section"><h2>Portais</h2><div class="box"><h3 style="font-family:Sora;color:var(--ddgreen);font-size:16px;margin-bottom:6px">Portal de Consignados — eConsig</h3><p style="margin:6px 0;font-size:14.5px;color:#33403b">Consulta de margem consignável, contratos ativos e inativos.</p><a href="https://portal.econsig.com.br/rjeconsig/v3/autenticar#no-back" target="_blank" rel="noopener">https://portal.econsig.com.br/rjeconsig/v3/autenticar#no-back</a></div><div class="box"><h3 style="font-family:Sora;color:var(--ddgreen);font-size:16px;margin-bottom:6px">Portal do Servidor</h3><p style="margin:6px 0;font-size:14.5px;color:#33403b">SOU.RJ — não centralizado, varia por lotação. Sem ação necessária para crédito novo.</p><a href="https://www.rj.gov.br/sourj/#/" target="_blank" rel="noopener">https://www.rj.gov.br/sourj/#/</a></div></div><div class="section"><h2>Margem, segurança e cálculo</h2><p>A margem consignável destinada ao convênio é de <strong>35% da renda líquida</strong> para novos empréstimos. Se no momento da averbação o servidor não tiver margem suficiente, a proposta é cancelada automaticamente pelo banco.</p><div class="note ok"><span class="nt">Sem margem de segurança</span>Os bancos não solicitam margem de segurança — é possível usar 100% da margem consignável.</div><div class="note ok"><span class="nt">Sem cálculo manual</span>Os bancos não realizam cálculo manual neste convênio.</div></div><div class="section"><h2>Situações especiais</h2><div class="note err"><span class="nt">Margem bloqueada</span>Cliente tem margem, mas restrita para novas contratações por regra do órgão pagador. Não é possível averbar até a remoção do bloqueio.</div></div><div class="section"><h2>Averbação</h2><p>Após a assinatura digital, o banco envia a solicitação ao portal. A averbação é automática pelo banco, mas exige o <b>token</b> (gerado no portal de consignados) para confirmar.</p></div><div class="section"><h2>Token / Confirmação</h2><p><b>Necessário token</b> para confirmar a averbação. Formato: 8 caracteres alfanuméricos. Validade: 10 dias após gerado.</p><h3>Como gerar o token</h3><div class="steps"><div class="step"><p>Faça login no portal eConsig.</p></div><div class="step"><p>Na tela inicial, selecione “Gerar novo token”.</p></div><div class="step"><p>Um código será exibido na tela e enviado ao e-mail cadastrado.</p></div><div class="step"><p>Envie o token à Konsi para dar prosseguimento.</p></div></div></div></section>
+<section class="page" id="page-pernambuco"><div class="crumb">Crédito Novo · Convênio Público</div><h1>Governo de Pernambuco</h1><p class="lead">Crédito consignado para servidores estaduais de PE. Banco gestor: Bradesco. A averbação exige a senha de acesso do servidor ao portal de consignados (mesma senha do portal do servidor). Sem margem de segurança, sem cálculo manual, sem token e sem anuência.</p><div class="section"><h2>Resumo do convênio</h2><div class="facts"><div class="fact"><div class="k">Banco gestor</div><div class="v">Bradesco</div></div><div class="fact"><div class="k">Margem</div><div class="v">Até 35% da renda líquida</div></div><div class="fact"><div class="k">Data de corte</div><div class="v">Dia 24 de cada mês</div></div><div class="fact"><div class="k">Margem de segurança</div><div class="v">Não exige</div></div><div class="fact"><div class="k">Cálculo manual</div><div class="v">Não</div></div><div class="fact"><div class="k">Token</div><div class="v">Não exige</div></div><div class="fact"><div class="k">Anuência</div><div class="v">Não exige</div></div><div class="fact"><div class="k">Limite de operações</div><div class="v">Sem limite em folha</div></div></div></div><div class="section"><h2>Portais</h2><div class="box"><h3 style="font-family:Sora;color:var(--ddgreen);font-size:16px;margin-bottom:6px">Portal de Consignados — ConsigFácil</h3><p style="margin:6px 0;font-size:14.5px;color:#33403b">Consulta de margem consignável, contratos ativos e inativos.</p><a href="https://www.peconsig.pe.gov.br/" target="_blank" rel="noopener">https://www.peconsig.pe.gov.br/</a></div><div class="box"><h3 style="font-family:Sora;color:var(--ddgreen);font-size:16px;margin-bottom:6px">Portal do Servidor</h3><p style="margin:6px 0;font-size:14.5px;color:#33403b">NPS-PE — centralizado, acessível a todo servidor do estado. Sem ação para crédito novo.</p><a href="https://www.nps.pe.gov.br/PORTALV2/#/" target="_blank" rel="noopener">https://www.nps.pe.gov.br/PORTALV2/#/</a></div></div><div class="section"><h2>Margem, segurança e cálculo</h2><p>A margem consignável destinada ao convênio é de <strong>35% da renda líquida</strong> para novos empréstimos. Se no momento da averbação o servidor não tiver margem suficiente, a proposta é cancelada automaticamente pelo banco.</p><div class="note ok"><span class="nt">Sem margem de segurança</span>Os bancos não solicitam margem de segurança — é possível usar 100% da margem consignável.</div><div class="note ok"><span class="nt">Sem cálculo manual</span>Os bancos não realizam cálculo manual neste convênio.</div></div><div class="section"><h2>Situações especiais</h2><div class="note err"><span class="nt">Margem bloqueada</span>Cliente tem margem, mas restrita por regra do órgão pagador. Não é possível averbar até a remoção do bloqueio.</div></div><div class="section"><h2>Averbação</h2><p>A averbação é automática pelo banco e depende da validação direto no portal. Diferente de outros convênios, é <b>imprescindível que o cliente informe a senha de acesso ao portal de consignados</b> (igual à senha do portal do servidor), para o banco confirmar a averbação.</p></div><div class="section"><h2>Token / Confirmação</h2><p>Não é necessário token. A averbação é automática com a <b>senha do servidor</b> após a assinatura digital.</p></div></section>
+<section class="page" id="page-alagoas"><div class="crumb">Crédito Novo · Convênio Público</div><h1>Governo de Alagoas</h1><p class="lead">Crédito consignado para servidores estaduais de AL. Órgão gestor: SEFAZ-AL. A averbação exige uma contrassenha numérica de 6 dígitos fornecida pelo servidor. Portal de consignados: Safe Consig.</p><div class="section"><h2>Resumo do convênio</h2><div class="facts"><div class="fact"><div class="k">Órgão gestor</div><div class="v">SEFAZ-AL</div></div><div class="fact"><div class="k">Margem</div><div class="v">Até 35% da renda líquida</div></div><div class="fact"><div class="k">Data de corte</div><div class="v">Variável (banco/ciclo da folha)</div></div><div class="fact"><div class="k">Margem de segurança</div><div class="v">Conforme banco</div></div><div class="fact"><div class="k">Cálculo manual</div><div class="v">Sim (adotado pelos bancos)</div></div><div class="fact"><div class="k">Contrassenha</div><div class="v">Sim — 6 dígitos numéricos</div></div><div class="fact"><div class="k">Anuência</div><div class="v">Não exige</div></div><div class="fact"><div class="k">Limite de operações</div><div class="v">Geralmente 8 a 10 por consignatária</div></div></div></div><div class="section"><h2>Portais</h2><div class="box"><h3 style="font-family:Sora;color:var(--ddgreen);font-size:16px;margin-bottom:6px">Portal de Consignados — Safe Consig</h3><p style="margin:6px 0;font-size:14.5px;color:#33403b">Consulta de margem consignável, contratos ativos e inativos.</p><a href="https://alagoas.safeconsig.com.br/safe/login" target="_blank" rel="noopener">https://alagoas.safeconsig.com.br/safe/login</a></div><div class="box"><h3 style="font-family:Sora;color:var(--ddgreen);font-size:16px;margin-bottom:6px">Portal do Servidor</h3><p style="margin:6px 0;font-size:14.5px;color:#33403b">Portal do Servidor SEPLAG-AL</p><a href="https://portaldoservidor.seplag.al.gov.br/login/" target="_blank" rel="noopener">https://portaldoservidor.seplag.al.gov.br/login/</a></div></div><div class="section"><h2>Margem, segurança e cálculo</h2><p>A margem consignável destinada ao convênio é de <strong>35% da renda líquida</strong> para novos empréstimos. Se no momento da averbação o servidor não tiver margem suficiente, a proposta é cancelada automaticamente pelo banco.</p><div class="note warn"><span class="nt">Margem de segurança conforme banco</span>Parte da margem reservada como proteção, variável por instituição financeira.</div><div class="note warn"><span class="nt">Cálculo manual adotado</span>Os bancos adotam cálculo manual e critérios mais rigorosos, pela exigência de contrassenha e risco do convênio.</div></div><div class="section"><h3>Limites de comprometimento</h3><div class="tw"><table><thead><tr><th>Tipo</th><th>Percentual máximo</th><th>Observação</th></tr></thead><tbody><tr><td><strong>Empréstimos consignados</strong></td><td>Até 35% da renda líquida</td><td>Inclui todos os contratos ativos</td></tr><tr><td><strong>Cartão consignado</strong></td><td>Até 5% da renda líquida</td><td>Separado dos 35% de empréstimos</td></tr><tr><td><strong>Total comprometível</strong></td><td>Até 40% da renda líquida</td><td>Soma de empréstimos + cartão</td></tr></tbody></table></div></div><div class="section"><h2>Situações especiais</h2><div class="note warn"><span class="nt">Servidor com dois provimentos</span>Algumas instituições consideram os dois vínculos. Margem negativa em um deles pode impactar a aprovação.</div><div class="note warn"><span class="nt">Exoneração / encerramento de vínculo</span>O desconto em folha é interrompido, mas o saldo devedor continua devido ao banco e pode ser cobrado por outros meios.</div><div class="note " style="border-color:#1f7fc4;background:#E7F2FB"><span class="nt">Licença médica / afastamento</span>Com proventos integrais, o desconto continua. Sem vencimento ou com redução, o desconto pode não ocorrer, gerando saldo a regularizar.</div></div><div class="section"><h2>Contrassenha de averbação</h2><p>Código numérico de <strong>6 dígitos</strong> usado exclusivamente neste convênio para autenticar e confirmar a averbação junto ao órgão pagador.</p><div class="steps"><div class="step"><p>O servidor informa a contrassenha de 6 dígitos à Konsi durante a aquisição da proposta.</p></div><div class="step"><p>O servidor assina o contrato digitalmente no app.</p></div><div class="step"><p>A Konsi envia a contrassenha ao banco parceiro.</p></div><div class="step"><p>O banco usa a contrassenha para enviar a averbação ao sistema da folha estadual.</p></div><div class="step"><p>A averbação é confirmada e a parcela fica reservada na margem.</p></div><div class="step"><p>O banco libera o valor na conta do servidor.</p></div></div><div class="tw"><table><thead><tr><th>Situação</th><th>O que ocorre</th></tr></thead><tbody><tr><td>Contrassenha não informada</td><td>A averbação não é processada. O servidor precisa informar o código.</td></tr><tr><td>Contrassenha incorreta</td><td>O banco rejeita a averbação. Verificar e informar novamente.</td></tr><tr><td>Contrassenha válida e enviada</td><td>A averbação segue normalmente após a assinatura.</td></tr></tbody></table></div></div><div class="section"><h2>Averbação</h2><p>Exige o envio da <b>contrassenha numérica de 6 dígitos</b> do servidor. Após a assinatura digital, a Konsi envia a contrassenha ao banco, que a usa para confirmar e efetivar o registro junto ao sistema estadual.</p></div><div class="section"><h2>Token / Confirmação</h2><p>Em vez de token, este convênio usa uma <b>contrassenha de 6 dígitos</b> (ex.: 123456), fornecida pelo servidor (não gerada pela Konsi). Transmitida ao banco só após a assinatura. Sem ela, a averbação não é processada.</p></div></section><!-- ============ COMPARAR CONVENIOS ============ -->
+<section class="page" id="page-comparar">
+  <div class="crumb">Crédito Novo · Convênios Públicos</div>
+  <h1>Comparar convênios</h1>
+  <p class="lead">Visão lado a lado das regras que mais mudam entre convênios: banco gestor, data de corte, margem de segurança, cálculo manual e o que confirma a averbação (token, anuência, contrassenha ou automático).</p>
+
+  <div class="section">
+    <h2>Tabela comparativa</h2>
+    <div class="tw"><table>
+      <thead><tr>
+        <th>Convênio</th><th>Banco gestor</th><th>Data de corte</th><th>Margem segurança</th><th>Cálculo manual</th><th>Confirmação da averbação</th>
+      </tr></thead>
+      <tbody>
+        <tr><td><strong>Bahia</strong></td><td>Banco do Brasil</td><td>Dia 16</td><td><span class="badge b-green">Não</span></td><td><span class="badge b-green">Não</span></td><td><span class="badge b-green">Automática</span></td></tr>
+        <tr><td><strong>Gov. São Paulo</strong></td><td>Banco do Brasil</td><td>Dia 12</td><td><span class="badge b-amber">Sim</span></td><td><span class="badge b-amber">Sim</span></td><td><span class="badge b-blue">Anuência (SOU.SP)</span></td></tr>
+        <tr><td><strong>Pref. São Paulo</strong></td><td>Banco do Brasil</td><td>Dia 25</td><td><span class="badge b-amber">Sim</span></td><td><span class="badge b-amber">Sim</span></td><td><span class="badge b-green">Automática</span></td></tr>
+        <tr><td><strong>Minas Gerais</strong></td><td>Itaú</td><td>Dia 12</td><td><span class="badge b-amber">R$ 10,00</span></td><td><span class="badge b-green">Não</span></td><td><span class="badge b-green">Automática</span></td></tr>
+        <tr><td><strong>Rio de Janeiro</strong></td><td>Bradesco</td><td>Dia 23</td><td><span class="badge b-green">Não</span></td><td><span class="badge b-green">Não</span></td><td><span class="badge b-amber">Token (8 caract.)</span></td></tr>
+        <tr><td><strong>Pernambuco</strong></td><td>Bradesco</td><td>Dia 24</td><td><span class="badge b-green">Não</span></td><td><span class="badge b-green">Não</span></td><td><span class="badge b-amber">Senha do servidor</span></td></tr>
+        <tr><td><strong>Alagoas</strong></td><td>SEFAZ-AL</td><td>Variável</td><td><span class="badge b-gray">Conforme banco</span></td><td><span class="badge b-amber">Sim</span></td><td><span class="badge b-amber">Contrassenha (6 díg.)</span></td></tr>
+      </tbody>
+    </table></div>
+    <div class="note"><span class="nt">Como ler</span>Todos os convênios usam margem de <b>35% da renda líquida</b>. A coluna que mais importa na operação é a <b>Confirmação da averbação</b> — ela define o que o cliente precisa fornecer (nada, token, senha, contrassenha ou anuência).</div>
+  </div>
+
+  <div class="section">
+    <h2>O que confirma a averbação em cada convênio</h2>
+    <div class="facts">
+      <div class="fact"><div class="k">Automática (sem ação)</div><div class="v">Bahia · Pref. SP · Minas</div></div>
+      <div class="fact"><div class="k">Token</div><div class="v">Rio de Janeiro</div></div>
+      <div class="fact"><div class="k">Senha do servidor</div><div class="v">Pernambuco</div></div>
+      <div class="fact"><div class="k">Contrassenha 6 dígitos</div><div class="v">Alagoas</div></div>
+      <div class="fact"><div class="k">Anuência + Prova de Vida</div><div class="v">Gov. São Paulo</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Portais de consignados</h2>
+    <div class="tw"><table><thead><tr><th>Convênio</th><th>Portal</th><th>Link</th></tr></thead><tbody>
+      <tr><td>Bahia</td><td>Consiglog</td><td><a href="https://govbahia.consiglog.com.br/Login.aspx" target="_blank" rel="noopener">govbahia.consiglog.com.br</a></td></tr>
+      <tr><td>Gov. São Paulo</td><td>Serviço de Controle de Consignação</td><td><a href="https://www.portaldoconsignado.com.br/home?0" target="_blank" rel="noopener">portaldoconsignado.com.br</a></td></tr>
+      <tr><td>Pref. São Paulo</td><td>Controle de consignação</td><td><a href="https://www.portaldoconsignado.com.br/home" target="_blank" rel="noopener">portaldoconsignado.com.br</a></td></tr>
+      <tr><td>Minas Gerais</td><td>Servidor.mg</td><td><a href="https://www.portaldoservidor.mg.gov.br/home" target="_blank" rel="noopener">portaldoservidor.mg.gov.br</a></td></tr>
+      <tr><td>Rio de Janeiro</td><td>eConsig</td><td><a href="https://portal.econsig.com.br/rjeconsig/v3/autenticar#no-back" target="_blank" rel="noopener">portal.econsig.com.br</a></td></tr>
+      <tr><td>Pernambuco</td><td>ConsigFácil</td><td><a href="https://www.peconsig.pe.gov.br/" target="_blank" rel="noopener">peconsig.pe.gov.br</a></td></tr>
+      <tr><td>Alagoas</td><td>Safe Consig</td><td><a href="https://alagoas.safeconsig.com.br/safe/login" target="_blank" rel="noopener">alagoas.safeconsig.com.br</a></td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+<!-- ============ CLT ============ -->
+<section class="page" id="page-clt">
+  <div class="crumb">Empréstimo Privado · Regime CLT</div>
+  <h1>Empréstimo privado — CLT</h1>
+  <p class="lead">O Crédito do Trabalhador (MP 1.292/2025) é o consignado para quem tem carteira assinada. Parcelas descontadas em folha via eSocial, juros menores e possibilidade de usar o FGTS como garantia.</p>
+
+  <div class="section">
+    <h2>Como funciona</h2>
+    <p>As parcelas são descontadas automaticamente na folha, sem boletos. Essa segurança para os bancos resulta em juros mais baixos e facilita a aprovação — inclusive para pessoas negativadas. Há possibilidade de uso do <strong>FGTS como garantia</strong>, o que pode reduzir ainda mais os juros. A análise costuma ser simplificada e a liberação rápida (até 24 horas em alguns casos).</p>
+    <div class="facts">
+      <div class="fact"><div class="k">Público</div><div class="v">Carteira assinada (CLT)</div></div>
+      <div class="fact"><div class="k">Margem</div><div class="v">Até 35% da renda líquida</div></div>
+      <div class="fact"><div class="k">Cartão consignado</div><div class="v">Até 5% adicionais</div></div>
+      <div class="fact"><div class="k">Prazo</div><div class="v">Até 60–96 meses</div></div>
+      <div class="fact"><div class="k">Teto de juros</div><div class="v">Não há (difere do público)</div></div>
+      <div class="fact"><div class="k">Integração</div><div class="v">eSocial · CTPS Digital</div></div>
+    </div>
+    <div class="note ok"><span class="nt">Vantagens</span>Juros reduzidos · débito automático em folha (evita atrasos) · menos burocracia via eSocial/CTPS Digital · liberação em até 24h · uso livre do valor.</div>
+    <div class="note warn"><span class="nt">Riscos</span>Redução da renda líquida mensal · maior chance de endividamento pelo fácil acesso · possível comprometimento do FGTS em caso de demissão · ausência de teto de juros definido por lei.</div>
+  </div>
+
+  <div class="section">
+    <h2>Onde consultar contratos</h2>
+    <p>Não existe portal de consignados nem portal do servidor para o CLT. Os contratos ativos e inativos podem ser verificados no site e app da <strong>Carteira de Trabalho Digital (CTPS)</strong>, com acesso via Gov.br.</p>
+    <a href="https://www.gov.br/pt-br/temas/carteira-de-trabalho-digital" target="_blank" rel="noopener">gov.br/pt-br/temas/carteira-de-trabalho-digital</a>
+  </div>
+
+  <div class="section">
+    <h2>Elegibilidade</h2>
+    <ul>
+      <li>Pode ser contratado <strong>mesmo sem convênio</strong> da empresa com bancos. A aprovação depende de critérios da instituição (CNAE, risco do setor, margem).</li>
+      <li>Não há tempo mínimo legal de empresa, mas bancos pedem em média <strong>3 meses</strong> de vínculo ativo no eSocial.</li>
+      <li>Contratos de experiência, aviso prévio, férias ou licença não impedem; a análise do banco é determinante.</li>
+      <li>Temporários e terceirizados podem contratar se o contrato cobrir o prazo do empréstimo.</li>
+      <li>Pessoas negativadas podem ser aprovadas — o desconto em folha reduz o risco.</li>
+      <li><strong>Não elegíveis:</strong> autônomos, PJ, profissionais liberais e MEIs (sem folha registrada).</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Margem consignável e limites</h2>
+    <p>A margem é calculada sobre o salário líquido (bruto menos INSS e IRRF), até 35% para empréstimos e 5% para cartão consignado.</p>
+    <div class="note"><span class="nt">Exemplo de cálculo</span>Salário bruto R$ 3.000 · descontos obrigatórios R$ 600 · líquido R$ 2.400. Margem: R$ 2.400 × 35% = <b>R$ 840</b> (valor máximo mensal de parcela).</div>
+    <ul>
+      <li>A remuneração pode incluir variáveis (comissões, horas extras, adicionais) que incidam INSS. Diárias e abonos ficam de fora.</li>
+      <li>Quando o salário aumenta, a margem aumenta automaticamente. Se o salário cai, a margem cai, mas a <strong>parcela contratada não diminui</strong>.</li>
+      <li>O desconto também pode incidir sobre 13º salário ou férias, se houver saldo contratual no mês.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Averbação e desconto em folha</h2>
+    <p>A averbação é a validação do contrato pelo banco, registrada nos sistemas integrados ao empregador. Prazo entre <strong>24h úteis e 5 dias</strong>, conforme o banco e períodos de "maciça" (processamento da folha).</p>
+    <div class="note warn"><span class="nt">Averbação ≠ Liberação</span>A averbação confirma que o desconto pode ocorrer em folha. Só após isso o banco agenda a liberação do valor — em média de 1 a 5 dias úteis depois.</div>
+    <p>O desconto começa na folha subsequente à averbação, aparecendo no holerite como "Empréstimo Consignado" ou "Crédito do Trabalhador". Também visível na CTPS Digital e nos apps dos bancos.</p>
+  </div>
+
+  <div class="section">
+    <h2>Demissão e FGTS</h2>
+    <p>O FGTS <strong>não é sacado automaticamente</strong> — é usado como garantia em caso de demissão sem justa causa. Nesse cenário, <strong>10% do saldo do FGTS</strong> e <strong>100% da multa rescisória</strong> são usados para abater a dívida. Se restar saldo, ele pode migrar para o novo emprego (via eSocial) ou ser pago por boleto/débito. Quem aderiu ao saque-aniversário pode contratar normalmente.</p>
+  </div>
+
+  <div class="section">
+    <h2>Segurança contra golpes</h2>
+    <div class="note err"><span class="nt">Sinais de golpe</span>Nenhuma instituição legítima pede <b>pagamento antecipado</b>, depósito de taxa para liberar, senha do app bancário, token ou código SMS. Desconfie de WhatsApp ou ligações de números desconhecidos prometendo liberação imediata. Propostas confiáveis vêm sempre de canais oficiais.</div>
+    <div class="note err"><span class="nt">Golpe de portabilidade/refin falso</span>O golpista promete reduzir parcela ou liberar valor extra, mas abre um novo contrato sem quitar o anterior — aumentando a dívida. Confirme sempre com o banco de origem se o contrato antigo foi realmente quitado.</div>
+  </div>
+
+  <div class="section">
+    <h2>Perguntas frequentes</h2>
+    <details class="acc"><summary>Posso perder todo o meu salário com o desconto?</summary><div class="body"><p>Não. Por lei, a parcela não pode ultrapassar 35% da renda líquida. Nenhum banco pode descontar acima disso, e o limite é registrado automaticamente na folha.</p></div></details>
+    <details class="acc"><summary>O que acontece se a empresa fechar ou mudar de CNPJ?</summary><div class="body"><p>A dívida continua existindo. O contrato pode migrar para boleto ou débito em conta e, ao conseguir novo emprego CLT, o desconto pode ser retomado em folha.</p></div></details>
+    <details class="acc"><summary>Onde vejo as parcelas do meu empréstimo?</summary><div class="body"><p>No contracheque (como "empréstimo consignado" ou "desconto consignado"), no app da CTPS Digital e nos apps dos bancos.</p></div></details>
+    <details class="acc"><summary>Posso escolher em qual banco contratar?</summary><div class="body"><p>Sim. E mesmo após contratar é possível transferir o contrato para outro banco com melhores condições, via portabilidade.</p></div></details>
+    <details class="acc"><summary>Preciso ter conta salário no banco que liberar?</summary><div class="body"><p>Não. O valor pode ser depositado em qualquer conta de titularidade do trabalhador.</p></div></details>
+    <details class="acc"><summary>Qual o valor mínimo de contratação?</summary><div class="body"><p>Varia por banco, em geral entre R$ 300 e R$ 500, respeitando a margem. Valores simbólicos abaixo do mínimo não são contratáveis por inviabilidade operacional.</p></div></details>
+    <details class="acc"><summary>Meu patrão vai saber que fiz empréstimo?</summary><div class="body"><p>O empregador acessa apenas o necessário para o desconto: valor da parcela e número do contrato. Não sabe qual banco concedeu nem a finalidade. Protegido pela LGPD.</p></div></details>
+    <details class="acc"><summary>O consignado CLT é igual ao do INSS?</summary><div class="body"><p>Ambos têm desconto em folha e juros baixos. O INSS é para aposentados/pensionistas, com teto de juros regulado. O CLT é para carteira assinada, pode usar FGTS como garantia e <b>não tem teto de juros</b> em lei.</p></div></details>
+    <details class="acc"><summary>Cancelamento e direito de arrependimento</summary><div class="body"><p>Em contratações digitais, há prazo de <b>7 dias corridos</b> após a assinatura eletrônica para desistir (CDC). O cancelamento é solicitado ao banco, que reverte a operação e libera a margem no eSocial. Após o prazo, só por liquidação antecipada com abatimento de juros.</p></div></details>
+    <details class="acc"><summary>Margem bloqueada sem liberação do crédito</summary><div class="body"><p>A margem pode aparecer bloqueada no eSocial mesmo sem o crédito ter sido liberado — quando o contrato foi enviado para averbação mas não finalizado por falha ou desistência. É preciso acionar o banco para cancelar a averbação e liberar a margem.</p></div></details>
+    <details class="acc"><summary>Impacto no score de crédito</summary><div class="body"><p>Não prejudica o score — o desconto automático reduz o risco. Pagamento regular pode até melhorar o histórico. Mas contratações ou consultas em excesso ao CPF podem sinalizar risco temporariamente.</p></div></details>
+    <details class="acc"><summary>Portabilidade — prazo de resposta</summary><div class="body"><p>A instituição de origem deve responder em até <b>5 dias úteis</b>. Recusa injustificada ou atraso pode ser reclamada no Banco Central. É um direito garantido.</p></div></details>
+    <details class="acc"><summary>Múltiplos contratos no mesmo vínculo</summary><div class="body"><p>Permitido, desde que a soma das parcelas não ultrapasse os 35%. Alguns bancos limitam a quantidade por política interna (restrição operacional, não legal).</p></div></details>
+    <details class="acc"><summary>Prazo máximo pela idade</summary><div class="body"><p>Não há idade máxima em lei, mas bancos somam idade + prazo do contrato (em geral até 75–80 anos no vencimento da última parcela). Ex.: aos 70 anos, contrato de até ~5 anos.</p></div></details>
+    <details class="acc"><summary>Contratação por correspondentes bancários</summary><div class="body"><p>É seguro, desde que o correspondente seja credenciado e atue por instituição registrada no Banco Central. Verifique a lista de autorizados do BC e desconfie de propostas sem contrato formal. Em contratação presencial, o direito de arrependimento de 7 dias pode não se aplicar.</p></div></details>
+    <details class="acc"><summary>Renovação antecipada / refinanciamento</summary><div class="body"><p>Pode renovar antes de quitar. A forma comum é o refinanciamento: parte do saldo pago é abatida e um novo contrato é gerado, com valor adicional se houver margem. Também é possível usar portabilidade.</p></div></details>
+  </div>
+</section>
+<section class="page" id="page-status"><div class="crumb">Operação · Agente de IA</div><h1>Status e etapas da proposta</h1><p class="lead">Toda proposta percorre uma sequência de setores até a liberação do crédito. Aqui estão os status internos do sistema e — o mais importante — a nomenclatura correta para usar ao falar com o cliente.</p><div class="section"><h2>Fluxo esperado</h2><div class="flow"><span class="fp">Sales</span><span class="ar">→</span><span class="fp">Digitação</span><span class="ar">→</span><span class="fp">Formalização</span><span class="ar">→</span><span class="fp">Em Progresso</span><span class="ar">→</span><span class="fp end">Finalizado</span></div><div class="note err"><span class="nt">Cancelado pode ocorrer em qualquer etapa</span>O setor Cancelado não faz parte do caminho ideal, mas é uma saída possível a partir de qualquer ponto do fluxo. Uma proposta cancelada não pode ser reativada.</div><div class="tw"><table><thead><tr><th>Setor</th><th>Descrição resumida</th></tr></thead><tbody><tr><td><strong>Sales</strong></td><td>Etapas anteriores à digitação no banco: elegibilidade, análise de documentos e qualificação da proposta.</td></tr><tr><td><strong>Digitação</strong></td><td>Dados da proposta inseridos no sistema do banco — por robô ou operador. Cliente não precisa agir.</td></tr><tr><td><strong>Formalização</strong></td><td>Entre a geração do contrato e a assinatura digital. Única etapa que exige ação direta do cliente.</td></tr><tr><td><strong>Em Progresso</strong></td><td>Processamento após a assinatura, entre Konsi, banco e convênio. Sem ação do cliente.</td></tr><tr><td><strong>Finalizado</strong></td><td>Averbação confirmada e crédito liberado na conta do cliente.</td></tr><tr><td><strong>Cancelado</strong></td><td>Proposta encerrada sem conclusão. Não pode ser reativada.</td></tr></tbody></table></div></div><div class="section"><h2>Regra de comunicação com o cliente</h2><div class="note err"><span class="nt">Atenção — uso obrigatório</span>Os nomes internos do sistema são <b>exclusivos para uso operacional</b>. Ao cliente, use sempre e somente a nomenclatura aprovada. <b>Nunca</b> mencione os termos: <b>inconsistência, triagem, reanálise, robô ou redigitação</b>.</div></div><div class="section"><h2>Status por setor</h2><div class="sector-block"><div class="sector-head" style="background:#04513F">Sales</div><div class="sector-body"><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Incompleto sem interação</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-green">Visível ao cliente</span> <span class="badge b-blue">Sem ação</span></div><p>Proposta iniciada no app mas não concluída; cliente ainda não procurou o time. Permanece aberta aguardando retomada.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Proposta em andamento&rdquo;</div></div></details><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Incompleto em negociação</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-green">Visível ao cliente</span> <span class="badge b-blue">Sem ação</span></div><p>Proposta incompleta, mas cliente em contato ativo. O time acompanha para concluir as pendências.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Proposta em andamento&rdquo;</div></div></details><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Inconsistência sales</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-green">Visível ao cliente</span> <span class="badge b-blue">Sem ação</span></div><p>Proposta avançou (digitada/assinada) mas foi cancelada pelo banco. Time avalia realocar para outro banco ou reenviar com ajuste de valores.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Proposta em análise&rdquo;</div></div></details><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Inconsistência contratação</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-green">Visível ao cliente</span> <span class="badge b-amber">Exige ação</span></div><p>Contracheque e identificação enviados foram reprovados pelo validador automático. Pendente até o reenvio correto.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Documentação pendente de reenvio&rdquo;</div></div></details><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Bloqueado para empréstimo</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-green">Visível ao cliente</span> <span class="badge b-blue">Sem ação</span></div><p>Restrição ativa por regra do convênio impede novos empréstimos. Não é definido pela Konsi nem pelo banco — é do órgão pagador.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Benefício bloqueado para empréstimo&rdquo;</div></div></details><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Em análise</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-green">Visível ao cliente</span> <span class="badge b-blue">Sem ação</span></div><p>Documentos sendo analisados pelo time operacional antes da digitação. Verificação interna.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Proposta em análise&rdquo;</div></div></details></div></div><div class="sector-block"><div class="sector-head" style="background:#0A6E58">Digitação</div><div class="sector-body"><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Aguardando digitação</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-gray">Uso interno</span> <span class="badge b-blue">Sem ação</span></div><p>Proposta na fila de digitação, aguardando operador ou robô. Status padrão de entrada no setor.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Proposta em processamento&rdquo;</div></div></details><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Inconsistência digitação</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-gray">Uso interno</span> <span class="badge b-blue">Sem ação</span></div><p>Instabilidade momentânea do sistema do banco durante a digitação. Será redigitada quando normalizar.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Proposta em processamento&rdquo;</div></div></details><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Aguardando redigitação</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-gray">Uso interno</span> <span class="badge b-blue">Sem ação</span></div><p>Precisa ser redigitada — digitação anterior não concluída ou cliente alterou dado (valor, prazo, conta).</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Proposta em processamento&rdquo;</div></div></details><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Inconsistência robô</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-gray">Uso interno</span> <span class="badge b-blue">Sem ação</span></div><p>O robô encontrou erro não resolvível sozinho. Um operador assume a digitação manualmente.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Proposta em processamento&rdquo;</div></div></details></div></div><div class="sector-block"><div class="sector-head" style="background:#0A9F82">Formalização</div><div class="sector-body"><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Pendente de formalização</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-green">Visível ao cliente</span> <span class="badge b-amber">Exige ação</span></div><p>Contrato gerado e disponível para assinatura digital. 'Sem interação' indica que o cliente ainda não acessou o link — para o cliente, o significado é o mesmo.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Aguardando assinatura do contrato&rdquo;</div></div></details><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Inconsistência formalização</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-green">Visível ao cliente</span> <span class="badge b-blue">Sem ação</span></div><p>Assinatura recebida, mas com divergência que exige verificação interna. Retoma automaticamente após resolução.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Aguardando assinatura do contrato&rdquo;</div></div></details><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Formalização expirada</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-green">Visível ao cliente</span> <span class="badge b-blue">Sem ação</span></div><p>Prazo de assinatura encerrado sem assinatura. Movida automaticamente para Cancelado. Não pode ser reativada.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Proposta expirada — prazo de assinatura encerrado&rdquo;</div></div></details></div></div><div class="sector-block"><div class="sector-head" style="background:#0D94C7">Em Progresso</div><div class="sector-body"><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Aguardando averbação</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-gray">Uso interno</span> <span class="badge b-blue">Sem ação</span></div><p>Formalizada com sucesso, aguardando o envio da solicitação de averbação ao convênio. Etapa automática e transitória.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Proposta em processamento&rdquo;</div></div></details><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Aguardando refin</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-gray">Uso interno</span> <span class="badge b-blue">Sem ação</span></div><p>Refinanciamento: o banco anterior ainda não confirmou a quitação do contrato substituído. A averbação do novo depende disso.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Proposta em processamento&rdquo;</div></div></details><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Em progresso</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-green">Visível ao cliente</span> <span class="badge b-blue">Sem ação</span></div><p>Contrato assinado e em processamento ativo no banco. Averbação em andamento. Etapa final antes da liberação.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Proposta em processamento&rdquo;</div></div></details><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Inconsistência progresso</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-green">Visível ao cliente</span> <span class="badge b-blue">Sem ação</span></div><p>Inconsistência no processamento junto ao banco/convênio. Equipe analisando. Cliente só age se for contactado.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Proposta pendente&rdquo;</div></div></details><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Reanálise Cliente</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-gray">Uso interno</span> <span class="badge b-blue">Sem ação</span></div><p>Retornou para reanálise aprofundada. Pode validar anexo de documentação adicional.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Proposta em processamento&rdquo;</div></div></details><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Triagem de Cancelados</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-gray">Uso interno</span> <span class="badge b-blue">Sem ação</span></div><p>Identificada como reprovada pelo banco, aguarda análise da equipe antes de ir definitivamente para Cancelado ou redigitação.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Proposta em processamento&rdquo;</div></div></details><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Aguardando anuência</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-gray">Uso interno</span> <span class="badge b-blue">Sem ação</span></div><p>Alguns convênios exigem anuência do órgão pagador antes de concluir a averbação. Aguarda essa validação.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Aguardando anuência&rdquo;</div></div></details></div></div><div class="sector-block"><div class="sector-head" style="background:#1EA853">Finalizado</div><div class="sector-body"><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Finalizado</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-green">Visível ao cliente</span> <span class="badge b-blue">Sem ação</span></div><p>Averbação confirmada, banco liberou e o crédito foi depositado. O desconto em folha passa a ocorrer no próximo fechamento após a averbação.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Crédito liberado&rdquo;</div></div></details></div></div><div class="sector-block"><div class="sector-head" style="background:#FF6060">Cancelado</div><div class="sector-body"><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Cancelado</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-green">Visível ao cliente</span> <span class="badge b-blue">Sem ação</span></div><p>Cancelada por decisão do banco, sistema ou convênio (não pelo cliente). O motivo determina os próximos passos.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Proposta cancelada&rdquo;</div></div></details><details class="acc" style="border:none;margin:6px 0;background:transparent"><summary style="padding:12px 4px">Cancelado pelo usuário</summary><div class="body" style="padding:0 4px 12px"><div style="margin-bottom:8px"><span class="badge b-green">Visível ao cliente</span> <span class="badge b-blue">Sem ação</span></div><p>O próprio cliente solicitou. Dentro de 7 dias corridos da assinatura (arrependimento), nenhum valor é cobrado.</p><div class="note" style="margin:8px 0"><b>Falar com o cliente:</b> &ldquo;Proposta cancelada a seu pedido&rdquo;</div></div></details></div></div></div><div class="section"><h2>Tabela de nomenclaturas</h2><div class="tw"><table><thead><tr><th>Setor</th><th>Status interno (sistema)</th><th>Nomenclatura para o cliente</th></tr></thead><tbody><tr><td>Sales</td><td>Incompleto sem interação</td><td><strong>Proposta em andamento</strong></td></tr><tr><td>Sales</td><td>Incompleto em negociação</td><td><strong>Proposta em andamento</strong></td></tr><tr><td>Sales</td><td>Inconsistência sales</td><td><strong>Proposta em análise</strong></td></tr><tr><td>Sales</td><td>Inconsistência contratação</td><td><strong>Documentação pendente de reenvio</strong></td></tr><tr><td>Sales</td><td>Bloqueado para empréstimo</td><td><strong>Benefício bloqueado para empréstimo</strong></td></tr><tr><td>Sales</td><td>Em análise</td><td><strong>Proposta em análise</strong></td></tr><tr><td>Digitação</td><td>Aguardando digitação</td><td><strong>Proposta em processamento</strong></td></tr><tr><td>Digitação</td><td>Inconsistência digitação</td><td><strong>Proposta em processamento</strong></td></tr><tr><td>Digitação</td><td>Aguardando redigitação</td><td><strong>Proposta em processamento</strong></td></tr><tr><td>Digitação</td><td>Inconsistência robô</td><td><strong>Proposta em processamento</strong></td></tr><tr><td>Formalização</td><td>Pendente de formalização</td><td><strong>Aguardando assinatura do contrato</strong></td></tr><tr><td>Formalização</td><td>Inconsistência formalização</td><td><strong>Aguardando assinatura do contrato</strong></td></tr><tr><td>Formalização</td><td>Formalização expirada</td><td><strong>Proposta expirada — prazo de assinatura encerrado</strong></td></tr><tr><td>Em Progresso</td><td>Aguardando averbação</td><td><strong>Proposta em processamento</strong></td></tr><tr><td>Em Progresso</td><td>Aguardando refin</td><td><strong>Proposta em processamento</strong></td></tr><tr><td>Em Progresso</td><td>Em progresso</td><td><strong>Proposta em processamento</strong></td></tr><tr><td>Em Progresso</td><td>Inconsistência progresso</td><td><strong>Proposta pendente</strong></td></tr><tr><td>Em Progresso</td><td>Reanálise Cliente</td><td><strong>Proposta em processamento</strong></td></tr><tr><td>Em Progresso</td><td>Triagem de Cancelados</td><td><strong>Proposta em processamento</strong></td></tr><tr><td>Em Progresso</td><td>Aguardando anuência</td><td><strong>Aguardando anuência</strong></td></tr><tr><td>Finalizado</td><td>Finalizado</td><td><strong>Crédito liberado</strong></td></tr><tr><td>Cancelado</td><td>Cancelado</td><td><strong>Proposta cancelada</strong></td></tr><tr><td>Cancelado</td><td>Cancelado pelo usuário</td><td><strong>Proposta cancelada a seu pedido</strong></td></tr></tbody></table></div></div><div class="section"><h2>Dependências entre etapas</h2><p>Cada status tem uma dependência obrigatória. Sem concluir a etapa anterior, a proposta não avança automaticamente.</p><div class="tw"><table><thead><tr><th>Status</th><th>Dependência para ocorrer</th></tr></thead><tbody><tr><td><strong>Incompleto sem interação</strong></td><td>Proposta criada no app — simulação iniciada</td></tr><tr><td><strong>Inconsistência contratação</strong></td><td>Documentos enviados reprovados pelo validador automático</td></tr><tr><td><strong>Bloqueado para empréstimo</strong></td><td>Verificação de elegibilidade identificou bloqueio ativo no convênio</td></tr><tr><td><strong>Aguardando digitação</strong></td><td>Análise de documentos aprovada no setor Sales</td></tr><tr><td><strong>Inconsistência robô</strong></td><td>Robô encontrou erro não resolvível de forma autônoma</td></tr><tr><td><strong>Pendente de formalização</strong></td><td>Digitação concluída — contrato gerado e enviado</td></tr><tr><td><strong>Formalização expirada</strong></td><td>Prazo de assinatura vencido sem ação do cliente</td></tr><tr><td><strong>Aguardando averbação</strong></td><td>Formalização concluída sem inconsistências</td></tr><tr><td><strong>Aguardando refin</strong></td><td>Refin com saldo devedor ativo no banco anterior</td></tr><tr><td><strong>Em progresso</strong></td><td>Solicitação de averbação enviada ao convênio</td></tr><tr><td><strong>Aguardando anuência</strong></td><td>Convênio exige anuência antes da averbação</td></tr><tr><td><strong>Finalizado</strong></td><td>Averbação confirmada e crédito liberado pelo banco</td></tr></tbody></table></div></div><div class="section"><h2>Glossário</h2><div class="tw"><table><thead><tr><th>Termo</th><th>Definição</th></tr></thead><tbody><tr><td><strong>Averbação</strong></td><td>Registro da parcela na folha de pagamento, garantindo o desconto automático mensal</td></tr><tr><td><strong>Bloqueio de convênio</strong></td><td>Restrição imposta pelo órgão pagador que impede novas contratações — só o convênio remove</td></tr><tr><td><strong>Digitação</strong></td><td>Inserção dos dados da proposta no sistema do banco, por operador ou robô</td></tr><tr><td><strong>Inconsistência</strong></td><td>Termo interno que indica divergência no processamento — não repassar ao cliente</td></tr><tr><td><strong>Nomenclatura ao cliente</strong></td><td>Descrição simplificada aprovada para comunicação, no lugar do nome técnico</td></tr><tr><td><strong>Refinanciamento (refin)</strong></td><td>Saldo devedor de um contrato é quitado e substituído por um novo contrato</td></tr><tr><td><strong>Robô de automação</strong></td><td>Sistema que digita propostas no banco — quando falha, um operador assume</td></tr><tr><td><strong>Sistema validador</strong></td><td>Ferramenta que avalia a qualidade dos documentos enviados no app</td></tr><tr><td><strong>Triagem de Cancelados</strong></td><td>Status interno de verificação antes do cancelamento definitivo</td></tr></tbody></table></div></div></section><!-- ============ FORMALIZACAO ============ -->
+<section class="page" id="page-formalizacao">
+  <div class="crumb">Operação · Formalização de Contrato</div>
+  <h1>Formalização — assinatura digital</h1>
+  <p class="lead">Etapa em que a proposta já foi digitada no banco e o cliente precisa assinar digitalmente o contrato. É uma etapa crítica do funil: sem a assinatura, o contrato não pode ser averbado e o valor não é liberado.</p>
+
+  <div class="section">
+    <h2>O que acontece nesta etapa</h2>
+    <div class="steps">
+      <div class="step"><p>A proposta foi aprovada pelo banco.</p></div>
+      <div class="step"><p>O cliente recebe o contrato por link (WhatsApp e no app da Konsi) para assinatura digital.</p></div>
+      <div class="step"><p>O cliente assina o contrato eletronicamente.</p></div>
+      <div class="step"><p>Após a assinatura, o banco processa o documento e inicia a averbação.</p></div>
+      <div class="step"><p>Com a averbação confirmada, o valor é liberado na conta.</p></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Informações da proposta — o que explicar</h2>
+    <div class="tw"><table><thead><tr><th>Informação</th><th>Como explicar ao cliente</th></tr></thead><tbody>
+      <tr><td><strong>Valor liberado</strong></td><td>É o valor que você vai receber na conta após aprovação e averbação.</td></tr>
+      <tr><td><strong>Valor da parcela</strong></td><td>Será descontado automaticamente do seu contracheque todo mês.</td></tr>
+      <tr><td><strong>Prazo</strong></td><td>Seu contrato tem X meses; durante todo o período a parcela será descontada.</td></tr>
+      <tr><td><strong>Taxa de juros</strong></td><td>É o custo mensal do crédito, já calculado na sua parcela.</td></tr>
+      <tr><td><strong>CET</strong></td><td>Custo total da operação, incluindo juros e encargos. Tudo já está no contrato.</td></tr>
+      <tr><td><strong>IOF</strong></td><td>Já embutido no CET e nas parcelas. Não é custo extra separado.</td></tr>
+      <tr><td><strong>Banco parceiro</strong></td><td>É o banco que aprovou e vai liberar seu empréstimo.</td></tr>
+    </tbody></table></div>
+    <h3>Dúvidas frequentes sobre os valores</h3>
+    <details class="acc"><summary>Por que o valor que vou receber é menor do que pedi?</summary><div class="body"><p>O valor liberado já considera descontos como IOF e outros encargos da operação. Tudo está detalhado no contrato e pode ser conferido antes de assinar.</p></div></details>
+    <details class="acc"><summary>Posso mudar o valor ou o prazo agora?</summary><div class="body"><p>Nesta etapa a proposta já foi aprovada com as condições simuladas. Para alterar, seria necessário cancelar e simular uma nova proposta. Direcione para um atendente se precisar.</p></div></details>
+    <details class="acc"><summary>O contrato que estou assinando é seguro?</summary><div class="body"><p>Sim. É um documento oficial do banco parceiro, com as condições aceitas na simulação. O cliente pode ler todo o contrato antes de assinar.</p></div></details>
+    <details class="acc"><summary>O link está expirado, já realizei a assinatura?</summary><div class="body"><p>Geralmente, link expirado significa que ele já foi utilizado e a assinatura foi concluída — o sistema não permite assinar duas vezes. Se o cliente afirmar que não assinou, verificar o motivo do erro com o banco e solicitar novo link.</p></div></details>
+  </div>
+
+  <div class="section">
+    <h2>Assinatura digital — passo a passo</h2>
+    <div class="tw"><table><thead><tr><th>Passo</th><th>Orientação ao cliente</th></tr></thead><tbody>
+      <tr><td><strong>1. Acessar</strong></td><td>Abra o app da Konsi, vá em operações e clique em "Clique aqui para assinar", ou abra o link recebido por WhatsApp.</td></tr>
+      <tr><td><strong>2. Abrir o link</strong></td><td>Siga o passo a passo na tela para a assinatura digital.</td></tr>
+      <tr><td><strong>3. Assinatura digital</strong></td><td>O site pede uma selfie para confirmar a identidade. Fique em local bem iluminado.</td></tr>
+      <tr><td><strong>4. Anexar documentação</strong></td><td>Após a selfie, o site solicita documento de identificação e contracheque.</td></tr>
+      <tr><td><strong>5. Finalizada</strong></td><td>Após selfie e documentos, há confirmação em tela e o app é atualizado.</td></tr>
+    </tbody></table></div>
+    <div class="note"><span class="nt">Onde encontrar no app</span>Na tela inicial, aba <b>Operações</b>, as propostas mais recentes mostram um card/banner com status <b>"Pendente Assinatura"</b>.</div>
+  </div>
+
+  <div class="section">
+    <h2>Acesso à câmera</h2>
+    <p>A assinatura digital (reconhecimento facial) é exigência de segurança do banco. Sem a selfie, não é possível concluir a formalização.</p>
+    <div class="tw"><table><thead><tr><th>Problema</th><th>Causa provável</th><th>Orientação</th></tr></thead><tbody>
+      <tr><td>App não abre a câmera</td><td>Permissão negada</td><td>Configurações › Aplicativos › navegador › Permissões › Câmera › ativar.</td></tr>
+      <tr><td>Câmera escura ou travada</td><td>Outro app usando / bug</td><td>Feche todos os apps e reabra o link. Se persistir, reinicie o celular.</td></tr>
+      <tr><td>Selfie rejeitada</td><td>Pouca luz, câmera coberta, rosto fora do frame</td><td>Local bem iluminado, sem óculos escuros ou chapéu, rosto centralizado.</td></tr>
+      <tr><td>"Câmera indisponível"</td><td>Problema no dispositivo / app desatualizado</td><td>Atualize o dispositivo ou reinicie o celular.</td></tr>
+    </tbody></table></div>
+    <details class="acc"><summary>Como ativar a câmera — Android</summary><div class="body"><p>Configurações › Aplicativos › ícone do navegador › Permissões › ative "Câmera" › volte ao link e tente novamente.</p></div></details>
+    <details class="acc"><summary>Como ativar a câmera — iPhone (iOS)</summary><div class="body"><p>Configurações › ícone do navegador › ative a chave de "Câmera" › volte ao link e tente novamente.</p></div></details>
+  </div>
+
+  <div class="section">
+    <h2>Acesso à localização</h2>
+    <p>Em alguns fluxos o app pede a localização — requisito de segurança e compliance para confirmar que a assinatura está sendo feita de um local válido. O dado não é compartilhado com terceiros nem armazenado permanentemente.</p>
+    <div class="tw"><table><thead><tr><th>Problema</th><th>Orientação</th></tr></thead><tbody>
+      <tr><td>App não obtém localização</td><td>Ative a localização: Configurações › Localização › Ativar.</td></tr>
+      <tr><td>Permissão negada</td><td>Configurações › Apps › navegador › Permissões › Localização › Permitir.</td></tr>
+      <tr><td>Localização imprecisa / erro de GPS</td><td>Vá para perto de uma janela ou ambiente aberto — o sinal é mais forte ao ar livre.</td></tr>
+      <tr><td>Cliente não quer fornecer</td><td>É requisito de segurança do banco. Sem a permissão, não é possível concluir neste dispositivo.</td></tr>
+    </tbody></table></div>
+  </div>
+
+  <div class="section">
+    <h2>Anexo de documentos</h2>
+    <div class="tw"><table><thead><tr><th>Documento</th><th>Quando</th><th>Observações</th></tr></thead><tbody>
+      <tr><td><strong>RG ou CNH</strong> (frente e verso)</td><td>Sempre — validação de identidade</td><td>Legível, sem reflexos, sem cortes. CNH dentro da validade.</td></tr>
+      <tr><td><strong>Contracheque / extrato</strong></td><td>Confirmar margem e renda</td><td>O mais recente (último mês).</td></tr>
+    </tbody></table></div>
+    <div class="note ok"><span class="nt">Boas práticas de foto</span>Local bem iluminado (luz natural) · fundo escuro contrasta bem · celular paralelo ao documento (sem inclinar) · confira a legibilidade · frente e verso separados quando pedido.</div>
+    <details class="acc"><summary>Problemas comuns no envio</summary><div class="body">
+      <p><b>Foto rejeitada por qualidade:</b> tire em local iluminado, sem flash direto, documento plano sobre superfície escura.</p>
+      <p><b>Arquivo muito grande:</b> tire a foto pela câmera do app (otimiza o tamanho).</p>
+      <p><b>Formato não aceito:</b> o banco aceita JPG, PNG e PDF.</p>
+      <p><b>Documento cortado/ilegível:</b> enquadre o documento inteiro, com todas as bordas visíveis.</p>
+      <p><b>Erro no upload:</b> verifique a conexão (Wi-Fi ou bom sinal de dados) e tente novamente.</p>
+    </div></details>
+  </div>
+
+  <div class="section">
+    <h2>Após a assinatura — próximos passos</h2>
+    <div class="tw"><table><thead><tr><th>Etapa</th><th>O que acontece</th><th>Prazo aproximado</th></tr></thead><tbody>
+      <tr><td><strong>Assinatura concluída</strong></td><td>Contrato enviado ao banco para processamento</td><td>Imediato</td></tr>
+      <tr><td><strong>Análise do banco</strong></td><td>Banco valida o contrato e verifica informações</td><td>Algumas horas</td></tr>
+      <tr><td><strong>Averbação</strong></td><td>Banco registra a parcela na margem junto ao órgão pagador</td><td>1 a 2 dias úteis</td></tr>
+      <tr><td><strong>Liberação do valor</strong></td><td>Valor depositado na conta</td><td>Após averbação — mesmo dia ou dia útil seguinte</td></tr>
+      <tr><td><strong>Primeiro desconto</strong></td><td>Parcela começa a ser descontada no contracheque</td><td>Próximo ciclo de folha (30 a 60 dias após contratação)</td></tr>
+    </tbody></table></div>
+    <div class="note"><span class="nt">Status não atualizou após assinar?</span>O banco costuma demorar alguns minutos para atualizar o sistema. Oriente o cliente a aguardar — é normal haver demora pelo volume de propostas.</div>
+  </div>
+
+  <div class="section">
+    <h2>Situações especiais</h2>
+    <details class="acc"><summary>Contrato / link expirado</summary><div class="body"><p>Links têm prazo de validade definido pelo banco. Link expirado normalmente significa que a assinatura já foi concluída com sucesso — oriente a aguardar a atualização no app em alguns minutos.</p></div></details>
+    <details class="acc"><summary>Assinou mas recebeu erro na tela</summary><div class="body"><p>Feche e reabra o link. Se ainda pedir assinatura, pode reiniciar o processo. Se aparecer expirado, o link já foi usado (o sistema não permite assinar duas vezes e encerra o acesso após finalizar). Se o erro persistir, aguarde alguns minutos e reabra.</p></div></details>
+    <details class="acc"><summary>Não recebeu o link ou notificação</summary><div class="body"><p>A geração do link pode demorar alguns minutos. Oriente a aguardar e solicitar novamente após 10 minutos. Se ainda não encontrar, direcione para atendimento humano para reenvio.</p></div></details>
+    <details class="acc"><summary>Não consegue acessar o app</summary><div class="body"><p>Oriente a usar a recuperação de senha na tela de login. Se não lembrar e-mail/telefone cadastrado, direcione para atendimento humano para validação de identidade.</p></div></details>
+    <details class="acc"><summary>Propostas no banco Daycoval</summary><div class="body"><p>Para o Daycoval, o anexo da documentação aparece <b>antes</b> da selfie. Oriente a seguir o passo a passo da tela. Se o banco pedir o contracheque e o cliente não tiver o documento físico, pode seguir com uma foto em branco.</p></div></details>
+  </div>
+
+  <div class="section">
+    <h2>Glossário simples (para o cliente)</h2>
+    <div class="tw"><table><thead><tr><th>Termo técnico</th><th>Explicação simples</th></tr></thead><tbody>
+      <tr><td><strong>Assinatura digital</strong></td><td>Forma eletrônica e segura de assinar o contrato, sem papel.</td></tr>
+      <tr><td><strong>Formalização</strong></td><td>Finalizar oficialmente o contrato. Sem ela, o contrato não tem validade.</td></tr>
+      <tr><td><strong>Averbação</strong></td><td>Registro da parcela no sistema do órgão pagador para o desconto em folha.</td></tr>
+      <tr><td><strong>Margem consignável</strong></td><td>Limite do salário que pode ser usado para pagar parcelas de empréstimo.</td></tr>
+      <tr><td><strong>Prova de vida</strong></td><td>Selfie pelo app para confirmar que é você mesmo assinando.</td></tr>
+      <tr><td><strong>CET</strong></td><td>Custo Efetivo Total — o custo real do empréstimo, incluindo tudo que será pago.</td></tr>
+      <tr><td><strong>Órgão pagador</strong></td><td>A entidade que paga o seu salário (prefeitura, governo do estado, INSS).</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- ============ BANCOS ============ -->
+<section class="page" id="page-konsigleads">
+<div class="crumb">Ferramentas de Atendimento</div><h1>Konsigleads — CRM interno</h1><p class="lead">O Konsigleads é o nosso CRM e o ponto de partida de todo atendimento. É nele que buscamos propostas, entendemos o funil, consultamos as informações do contrato e usamos as ferramentas internas do dia a dia. <b>Antes de responder qualquer cliente, abra a proposta no Konsigleads: contexto primeiro, resposta depois.</b></p>
+
+<div class="section"><h2>O funil de atendimento</h2>
+<p>Toda proposta percorre os setores abaixo, nesta ordem, até a liberação do crédito:</p>
+<div class="flow"><span class="fp">Sales</span><span class="ar">→</span><span class="fp">Digitação</span><span class="ar">→</span><span class="fp">Formalização</span><span class="ar">→</span><span class="fp">Em Progresso</span><span class="ar">→</span><span class="fp end">Finalizado</span></div>
+<div class="tw"><table><thead><tr><th>Setor</th><th>O que significa</th></tr></thead><tbody>
+<tr><td><strong>Sales</strong></td><td>Etapas anteriores à digitação no banco: elegibilidade, análise de documentos e qualificação da proposta.</td></tr>
+<tr><td><strong>Digitação</strong></td><td>Dados da proposta inseridos no sistema do banco — por robô ou operador. Cliente não precisa agir.</td></tr>
+<tr><td><strong>Formalização</strong></td><td>Entre a geração do contrato e a assinatura digital. Única etapa que exige ação direta do cliente.</td></tr>
+<tr><td><strong>Em Progresso</strong></td><td>Processamento após a assinatura, entre Konsi, banco e convênio. Sem ação do cliente.</td></tr>
+<tr><td><strong>Finalizado</strong></td><td>Averbação confirmada e crédito liberado na conta do cliente.</td></tr>
+<tr><td><strong>Cancelado</strong></td><td>Proposta encerrada sem conclusão. Pode ocorrer a partir de qualquer etapa e não pode ser reativada.</td></tr>
+</tbody></table></div>
+<div class="note"><span class="nt">Detalhes de cada status</span>A lista completa de status internos de cada setor — e a nomenclatura correta para usar com o cliente — está na página <b data-go="status" style="cursor:pointer;color:var(--green);text-decoration:underline">Status da proposta</b>.</div>
+</div>
+
+<div class="section"><h2>Como buscar uma proposta</h2>
+<div class="facts">
+<div class="fact"><div class="k">Busca principal</div><div class="v">CPF</div></div>
+<div class="fact"><div class="k">Alternativa</div><div class="v">Telefone</div></div>
+<div class="fact"><div class="k">Busca exata</div><div class="v">ADE (nº da proposta)</div></div>
+</div>
+<p>É possível refinar a busca com filtros de todas as informações da proposta:</p>
+<p><span class="badge b-green">Datas</span> <span class="badge b-green">Status</span> <span class="badge b-green">Banco</span> <span class="badge b-green">Produto</span> <span class="badge b-green">Convênio</span></p>
+<!-- SUBSTITUA o bloco abaixo por um print da tela de busca do Konsigleads -->
+</div>
+
+<div class="section"><h2>Dentro da proposta</h2>
+<p>Ao abrir uma proposta, você encontra todas as informações do contrato e da digitação — e, principalmente, o <b>histórico</b> de tudo o que aconteceu com ela: trocas de status, eventos e quem fez o quê. Na dúvida sobre o que dizer ao cliente, o histórico responde antes de você precisar perguntar a alguém.</p>
+<!-- SUBSTITUA o link abaixo por uma proposta de exemplo no Konsigleads -->
+</div>
+
+<div class="section"><h2>Troca de status e automações</h2>
+<p>Mover uma proposta de setor não é só organização — é comunicação com o cliente. Cada troca de status dispara automaticamente:</p>
+<div class="steps">
+<div class="step"><h4>Envio de template de WhatsApp ao cliente</h4><p>O sistema envia uma mensagem automática informando a nova etapa. Nenhum clique extra é necessário.</p></div>
+<div class="step"><h4>Troca da equipe responsável</h4><p>A responsabilidade pela proposta passa para a equipe do novo setor — e os próximos atendimentos no ColmeIA vão para o novo responsável.</p></div>
+</div>
+<div class="note warn"><span class="nt">Atenção</span>Só troque o status quando a proposta realmente avançou. <b>Toda troca envia mensagem ao cliente</b> — um clique errado gera confusão e retrabalho.</div>
+<div class="note"><span class="nt">Automação na esteira</span>Além das automações de troca de status, o <b>Robô de Status</b> consulta os bancos e atualiza a esteira automaticamente a cada 30 minutos. Entenda os três estados do robô e como agir em cada um no <b data-go="pb-robo" style="cursor:pointer;color:var(--green);text-decoration:underline">Playbook do Robô de Status</b>.</div>
+</div>
+</section>
+
+<section class="page" id="page-colmeia">
+<div class="crumb">Ferramentas de Atendimento</div><h1>ColmeIA — WhatsApp oficial</h1><p class="lead">O ColmeIA é a nossa plataforma oficial de mensageria por WhatsApp. É por aqui que a maioria dos clientes fala com a Konsi — e onde você vai passar boa parte do dia.</p>
+
+<div class="section"><h2>Como um atendimento chega até você</h2>
+<div class="steps">
+<div class="step"><h4>Cliente envia mensagem</h4><p>Qualquer mensagem do cliente entra primeiro no ColmeIA.</p></div>
+<div class="step"><h4>IA de atendimento responde</h4><p>Nossa IA tenta resolver. Se ela dá conta, o atendimento nem chega até você.</p></div>
+<div class="step"><h4>Vai para o responsável</h4><p>Se a IA não sabe responder, o atendimento é enviado ao <b>responsável pelo acompanhamento</b> — definido no Konsigleads de acordo com o status e o setor da proposta.</p></div>
+<div class="step"><h4>Notificação de novo atendimento</h4><p>Você recebe o aviso e a conversa já está disponível para atender.</p></div>
+</div>
+<!-- SUBSTITUA o bloco abaixo por um print da notificação / fila de atendimentos -->
+</div>
+
+<div class="section"><h2>Janela de atendimento: aberta × fechada</h2>
+<p>Como sistema de mensageria, o ColmeIA segue as regras da Meta. A janela abre a cada mensagem do cliente e dura <b>24 horas</b>:</p>
+<div class="win-grid">
+<div class="win openw"><h4>🟢 Janela ABERTA</h4><p><b>Cliente interagiu há menos de 24h.</b></p><p>Você pode digitar o que quiser, livremente — atendimento normal, em tempo real.</p><p>Cada nova mensagem do cliente renova as 24 horas.</p></div>
+<div class="win closedw"><h4>🔒 Janela FECHADA</h4><p><b>Cliente ficou 24h sem interagir.</b></p><p>Mensagem livre não é mais permitida.</p><p>O único caminho de contato é a <b>chamada ativa</b> — um template pré-aprovado pela Meta.</p></div>
+</div>
+<div class="note ok"><span class="nt">Resumo prático</span>Cliente respondeu? Janela aberta, fale à vontade. Cliente sumiu por 24h? Reabra a conversa com uma chamada ativa.</div>
+</div>
+
+<div class="section"><h2>Chamada ativa — iniciando conversas</h2>
+<p>Para iniciar conversa com qualquer cliente — esteja onde estiver no funil, com janela aberta ou fechada — usamos <b>templates pré-aprovados pela Meta</b>. No ColmeIA, eles se chamam <b>chamadas ativas</b>.</p>
+<div class="tw"><table><thead><tr><th>Característica</th><th>Como funciona</th></tr></thead><tbody>
+<tr><td><strong>Inicia conversas do zero</strong></td><td>É a porta de entrada para contato ativo: você procura o cliente, não espera ele chegar.</td></tr>
+<tr><td><strong>Texto pré-aprovado</strong></td><td>O conteúdo segue um modelo já validado pela Meta — não é texto livre.</td></tr>
+<tr><td><strong>Funciona com janela fechada</strong></td><td>É o único formato aceito quando o cliente está há mais de 24h sem responder.</td></tr>
+</tbody></table></div>
+<!-- SUBSTITUA o bloco abaixo por um print do envio de chamada ativa -->
+</div>
+
+<div class="section"><h2>Durante o atendimento: macros e tags</h2>
+<div class="tw"><table><thead><tr><th>Recurso</th><th>Para que serve</th></tr></thead><tbody>
+<tr><td><strong>Macros</strong></td><td>Atalhos de mensagens prontas para as situações mais comuns. Ganham tempo e padronizam a comunicação — sem parecer robô.</td></tr>
+<tr><td><strong>Tags</strong></td><td>Etiquetas que classificam e organizam as conversas, facilitando o acompanhamento e a passagem de contexto entre o time.</td></tr>
+</tbody></table></div>
+<div class="note"><span class="nt">Parte prática</span>Esta etapa é demonstrada ao vivo, com atendimento real na plataforma.</div>
+<!-- SUBSTITUA o bloco abaixo por um link de material/gravação da demonstração prática -->
+</div>
+</section>
+
+<section class="page" id="page-intercom">
+<div class="crumb">Ferramentas de Atendimento</div><h1>Intercom — mensageria no app</h1><p class="lead">O Intercom é a plataforma oficial de mensageria dentro do aplicativo Konsi. O funcionamento é parecido com o do ColmeIA — e o uso é bem objetivo.</p>
+
+<div class="section"><h2>Quando usar</h2>
+<div class="note warn"><span class="nt">Regra de uso</span>Use o Intercom <b>somente quando o cliente não responde pelo ColmeIA</b>. O WhatsApp é sempre a primeira tentativa de contato.</div>
+</div>
+
+<div class="section"><h2>Como abrir um atendimento</h2>
+<div class="steps">
+<div class="step"><h4>Localize o cliente pelo e-mail</h4><p>O atendimento é aberto pelo e-mail: basta inserir o e-mail do cliente na plataforma.</p></div>
+<div class="step"><h4>Inicie a conversa</h4><p>Envie a mensagem e realize o atendimento normalmente. O cliente recebe dentro do aplicativo Konsi.</p></div>
+</div>
+<!-- SUBSTITUA o bloco abaixo por um print da abertura de atendimento -->
+</div>
+
+<div class="section"><h2>Fique sempre de olho</h2>
+<p>Outros times podem <b>transferir atendimentos</b> para você a qualquer momento. Por isso, acompanhe a plataforma ao longo do dia — um atendimento transferido sem resposta é um cliente esperando.</p>
+<div class="note"><span class="nt">Parte prática</span>O uso do Intercom é demonstrado na prática durante o onboarding.</div>
+</div>
+</section>
+
+<section class="page" id="page-pb-emprogresso">
+<div class="crumb">Playbooks · Atendimento</div><h1>Atendimento na etapa Em Progresso</h1><p class="lead">Guia de referência do Time de Atendimento para a etapa <b>Em Progresso</b> — da solicitação de documentos ao manejo de situações críticas com o cliente. Equipe: Backoffice · Atendimento. Etapa: pós-assinatura.</p>
+
+<div class="section"><h2>O papel do atendimento nesta etapa</h2>
+<p>A etapa Em Progresso começa imediatamente após a assinatura do contrato e segue até a conclusão da operação — quando o crédito é liberado e o pagamento chega à conta do cliente. Nesse intervalo, o time de atendimento é o ponto de contato ativo que mantém tudo em movimento.</p>
+<p>Todos os status desta etapa são de responsabilidade do time — <b>Em Progresso</b>, <b>Aguarda Averbação</b>, <b>Inconsistência Progresso</b>, <b>Reanálise</b>, <b>Triagem de Cancelados</b> e <b>Aguardando Anuência</b>. Três deles exigem atuação direta e imediata junto ao cliente:</p>
+<div class="tw"><table><thead><tr><th>Status</th><th>O que exige do time</th></tr></thead><tbody>
+<tr><td><strong>⚠️ Inconsistência Progresso</strong></td><td>Indica pendência no contrato que precisa ser resolvida pelo time.</td></tr>
+<tr><td><strong>🔄 Reanálise</strong></td><td>O cliente regulariza a situação pelo app e a proposta retoma o fluxo.</td></tr>
+<tr><td><strong>✅ Aguardando Anuência</strong></td><td>Exclusivo do GOV SP: o time orienta o cliente a concluir a confirmação no aplicativo.</td></tr>
+</tbody></table></div>
+<div class="dn-grid">
+<div class="dn do"><h4>O atendimento bem feito garante</h4><ul><li>Operações sem paradas por pendências simples</li><li>Cliente informado e tranquilo durante o processo</li><li>Prazos, repasses e comissionamentos preservados</li><li>Experiência de crédito segura e transparente</li></ul></div>
+<div class="dn dont"><h4>Falhas nesta etapa causam</h4><ul><li>Atrasos em toda a esteira operacional</li><li>Insatisfação e desconfiança do cliente</li><li>Risco de cancelamento e perda de receita</li><li>Impacto direto no comissionamento</li></ul></div>
+</div>
+</div>
+
+<div class="section"><h2>Padrão de atendimento Konsi</h2>
+<p>Seis pilares guiam cada interação — eles voltam a aparecer em todos os cenários deste playbook:</p>
+<div class="pilares">
+<div class="pilar"><h4>💬 Comunicação clara</h4><p>Objetiva, acolhedora e sem jargões. O cliente precisa entender o que está acontecendo.</p></div>
+<div class="pilar"><h4>⚡ Agilidade</h4><p>Retorno rápido. Pendências resolvidas sem deixar o cliente esperando sem resposta.</p></div>
+<div class="pilar"><h4>🤝 Empatia</h4><p>Escuta ativa, respeito e atenção. O cliente sente que está sendo ouvido e cuidado.</p></div>
+<div class="pilar"><h4>✔️ Confirmação</h4><p>Sempre confirmar informações antes de qualquer ação ou envio ao cliente.</p></div>
+<div class="pilar"><h4>🔒 Privacidade</h4><p>Compromisso com a proteção de dados e com a segurança de cada interação.</p></div>
+<div class="pilar"><h4>✨ Encerramento cordial</h4><p>Finalizar de forma prestativa — o cliente deve sair com a sensação de ter sido bem atendido.</p></div>
+</div>
+<div class="note"><span class="nt">Tom de voz Konsi</span>Linguagem simples, clara e acolhedora — com formalidade suficiente para transmitir profissionalismo. Evite gírias e regionalismos. Emojis são bem-vindos com moderação: 😊 💚 ✨ 🔒 📄 são exemplos adequados para este contexto.</div>
+</div>
+
+<div class="section"><h2>Solicitação de documentos</h2>
+<div class="note"><span class="nt">Pilar em foco</span><b>Comunicação clara · Confirmação · Privacidade</b> — explique o motivo, reforce a segurança do processo e revise antes de enviar.</div>
+<details class="acc"><summary>📄 RG (frente e verso) — modelos de mensagem</summary><div class="body">
+<div class="msg">Por gentileza, poderia enviar uma foto do seu RG (frente e verso), de forma legível, para darmos continuidade à análise? 📄</div>
+<div class="msg">Você poderia encaminhar uma foto do seu RG frente e verso? 📑 É importante que todas as informações estejam visíveis.</div>
+</div></details>
+<details class="acc"><summary>📋 Contracheque — modelos de mensagem</summary><div class="body">
+<div class="msg">Por gentileza, poderia enviar o seu último contracheque completo e legível em PDF para análise? 📄</div>
+<div class="msg">Para darmos continuidade ao processo, preciso do seu contracheque atualizado em PDF. Por favor, poderia me enviar por aqui? 😊</div>
+</div></details>
+<details class="acc"><summary>🏦 Extrato bancário — modelos de mensagem</summary><div class="body">
+<div class="msg">Por gentileza, poderia enviar o seu extrato bancário atualizado em PDF para análise?</div>
+<div class="msg">O banco solicitou o envio do seu extrato bancário dos últimos 30 dias em PDF, constando a sua TED salarial. Por favor, poderia me enviar por aqui? 😀</div>
+</div></details>
+</div>
+
+<div class="section"><h2>Cliente recusa enviar documentação</h2>
+<div class="note"><span class="nt">Pilar em foco</span><b>Empatia · Comunicação clara · Privacidade</b> — nunca pressione. Explique o motivo com calma e reforce que o processo é seguro.</div>
+<p>O cliente normalmente recusa por insegurança ou desconfiança. O objetivo é tranquilizá-lo, não pressioná-lo. Explique que a documentação é uma exigência bancária para proteção dos próprios dados dele.</p>
+<p><b>Argumentos que funcionam:</b> é uma exigência do banco · serve para proteger os seus dados · ajuda a evitar fraudes e divergências · garante mais segurança na contratação · necessário para concluir a análise.</p>
+<div class="msg">Entendo perfeitamente sua preocupação 😊 Esses documentos são solicitados pelo banco apenas para validação de segurança e continuidade da análise da proposta. Sem eles, infelizmente o processo não consegue avançar. Podemos dar continuidade? 💚</div>
+<div class="msg">Entendo a sua dúvida 😊 A solicitação dessa documentação é um procedimento padrão do banco para garantir a segurança dos seus dados e validar as informações da contratação. Podemos dar continuidade? 💚</div>
+<div class="dn-grid">
+<div class="dn do"><h4>✔ Faça</h4><ul><li>Explique claramente o motivo da solicitação</li><li>Reforce que o processo é seguro e oficial</li><li>Demonstre disponibilidade para ajudar</li><li>Transmita segurança e confiança</li></ul></div>
+<div class="dn dont"><h4>✕ Evite</h4><ul><li>"Se não enviar, não vai sair."</li><li>"O senhor precisa mandar."</li><li>"Sem isso não tem o que fazer."</li><li>"O banco exige e pronto."</li></ul></div>
+</div>
+<div class="note ok"><span class="nt">Lembre</span>Quanto mais seguro e acolhido o cliente se sentir, maiores as chances de continuidade da operação.</div>
+</div>
+
+<div class="section"><h2>Proposta travada / sem retorno</h2>
+<div class="note"><span class="nt">Pilar em foco</span><b>Agilidade · Comunicação clara · Empatia</b> — mesmo sem novidade, o cliente precisa sentir acompanhamento ativo.</div>
+<p>Quando a proposta fica em análise por mais tempo que o esperado, o cliente tende a ficar ansioso. Uma resposta vaga como <i>"está em análise"</i> aumenta a insegurança. O segredo é mostrar presença e cuidado, mesmo sem ter um resultado concreto para apresentar.</p>
+<div class="msg">Estou acompanhando sua proposta junto ao banco e já solicitei prioridade na análise 😊 No momento, ela permanece em validação interna, mas sigo monitorando para lhe atualizar assim que houver retorno.</div>
+<div class="msg">Entendo sua preocupação 😊 No momento, o banco ainda está realizando as validações internas da proposta. Já acionamos o suporte responsável e estamos aguardando posicionamento para continuidade.</div>
+<p><b>Frases de apoio:</b> "o banco está finalizando as validações" · "suporte já foi acionado" · "acompanhando com prioridade" · "assim que houver atualização, aviso" · "seguimos monitorando internamente".</p>
+<div class="dn-grid">
+<div class="dn do"><h4>✔ Faça</h4><ul><li>Demonstre que o acompanhamento está ativo</li><li>Explique as etapas internas do banco</li><li>Informe que o suporte já foi acionado</li><li>Ofereça retorno proativo assim que houver novidade</li></ul></div>
+<div class="dn dont"><h4>✕ Evite</h4><ul><li>"Não tem retorno ainda."</li><li>"Tem que esperar."</li><li>"Não sei informar."</li><li>Respostas curtas e sem contexto</li></ul></div>
+</div>
+</div>
+
+<div class="section"><h2>Cliente agressivo ou irritado</h2>
+<div class="note"><span class="nt">Pilar em foco</span><b>Empatia · Comunicação clara · Encerramento cordial</b> — calma, escuta ativa e foco na solução, mesmo sob pressão.</div>
+<p>O cliente agressivo normalmente não está com raiva do time de atendimento — está frustrado com a situação. Reconhecer isso muda completamente a dinâmica. <b>Quem mantém a calma, assume o controle do atendimento.</b></p>
+<div class="msg">Entendo sua insatisfação e compreendo sua preocupação 😊 Estou acompanhando seu caso e verificando internamente a melhor forma de lhe auxiliar. Assim que eu tiver um retorno, entro em contato com você.</div>
+<div class="msg">Compreendo sua frustração 😊 No momento, o banco ainda está finalizando as validações internas da proposta, mas sigo acompanhando sua solicitação com prioridade.</div>
+<p><b>Frases que desarmam o conflito:</b> "entendo sua preocupação" · "estou acompanhando seu caso" · "já acionamos o suporte responsável" · "vamos verificar a melhor solução" · "assim que houver retorno, lhe atualizo".</p>
+<div class="dn-grid">
+<div class="dn do"><h4>✔ Faça</h4><ul><li>Mantenha a calma e não responda no mesmo tom</li><li>Valide a insatisfação de forma respeitosa</li><li>Explique a situação com clareza e transparência</li><li>Conduza para uma solução concreta</li></ul></div>
+<div class="dn dont"><h4>✕ Evite</h4><ul><li>Responder no mesmo tom agressivo</li><li>Demonstrar irritação ou impaciência</li><li>Usar respostas secas ou ríspidas</li><li>Interromper o cliente durante a fala</li></ul></div>
+</div>
+</div>
+
+<div class="section"><h2>Cancelamento + estratégias de conversão</h2>
+<div class="note"><span class="nt">Pilar em foco</span><b>Empatia · Comunicação clara · Agilidade</b> — compreender antes de argumentar. Converter pela confiança, não pela pressão.</div>
+<p>Quando o cliente quer cancelar, o primeiro movimento não é contra-argumentar — é <b>entender</b>. A maioria dos cancelamentos nasce de insegurança, dúvida não respondida ou oferta de um concorrente. Identifique o gatilho antes de argumentar: insegurança com o processo? Dúvida não esclarecida? Oferta de outro banco? Demora na análise? Falta de retorno?</p>
+<div class="tw"><table><thead><tr><th>Estratégia</th><th>Como aplicar</th></tr></thead><tbody>
+<tr><td><strong>⚙️ Operação em andamento</strong></td><td>Informe que a proposta já está em análise junto ao banco. Cancelar agora interrompe condições que podem não estar disponíveis numa nova solicitação.</td></tr>
+<tr><td><strong>🔒 Segurança e credibilidade</strong></td><td>Reforce que o processo é conduzido pela Konsi com transparência e pelos canais autorizados. O cliente está protegido em todas as etapas.</td></tr>
+<tr><td><strong>🤝 Acompanhamento personalizado</strong></td><td>Mostre que o time está presente e dedicado ao caso. Esse nível de atenção não é garantido em outras opções — e isso tem valor real para o cliente.</td></tr>
+</tbody></table></div>
+<h3 style="margin:16px 0 4px;font-size:16px;color:var(--ddgreen)">Exemplos práticos de conversão</h3>
+<details class="acc"><summary>Gatilho: insegurança com o processo → Segurança e credibilidade</summary><div class="body">
+<p><b>Cliente:</b> "Quero cancelar. Não sei se esse negócio é seguro, tô desconfiado."</p>
+<div class="msg">Entendo perfeitamente sua preocupação 😊 Posso te garantir que todo o processo é conduzido pela Konsi de forma segura e pelos canais autorizados. Suas informações estão protegidas em todas as etapas 🔒 Se quiser, posso explicar como funciona cada passo para você se sentir mais tranquilo. Podemos continuar?</div>
+<p><b>🔍 Por que funciona:</b> valida a preocupação sem questionar a desconfiança, depois oferece transparência ativa — mais eficaz do que simplesmente afirmar "é seguro".</p>
+</div></details>
+<details class="acc"><summary>Gatilho: oferta de outro banco → Operação em andamento</summary><div class="body">
+<p><b>Cliente:</b> "Recebi uma proposta de outro banco com taxa melhor. Quero cancelar."</p>
+<div class="msg">Compreendo sua decisão 😊 Só quero te passar uma informação importante antes: sua proposta já está em andamento junto ao banco e as condições estão garantidas para você neste momento. Cancelando agora, essas condições podem não estar disponíveis numa nova solicitação, e o processo precisaria recomeçar do zero. Vale a pena confirmar se as taxas são realmente equivalentes antes de decidir. Posso verificar algum detalhe da sua proposta atual para ajudar?</div>
+<p><b>🔍 Por que funciona:</b> não desqualifica a concorrência — apresenta o custo real da troca (tempo, processo, incerteza) e abre espaço para uma comparação consciente.</p>
+</div></details>
+<details class="acc"><summary>Gatilho: demora na análise → Acompanhamento personalizado</summary><div class="body">
+<p><b>Cliente:</b> "Faz dias que não tenho retorno. Não aguento mais esperar, quero cancelar."</p>
+<div class="msg">Entendo sua frustração, e peço desculpas pela demora no retorno 😊 Sua proposta está em validação interna no banco — já acionei o suporte responsável com prioridade e estou monitorando diretamente. Assim que tiver uma atualização, te aviso imediatamente. Me dá mais um dia útil para retornar com um posicionamento concreto?</div>
+<p><b>🔍 Por que funciona:</b> reconhece a falha sem transferir culpa, demonstra ação concreta e propõe um prazo específico — substitui a ansiedade da incerteza por uma expectativa gerenciável.</p>
+</div></details>
+<details class="acc"><summary>Gatilho: dúvida não esclarecida → Acompanhamento + Segurança</summary><div class="body">
+<p><b>Cliente:</b> "Não entendi direito como vai funcionar o desconto. Prefiro desistir."</p>
+<div class="msg">Claro, vou te explicar direitinho 😊 O desconto vai ser feito diretamente na sua folha de pagamento — você não precisa se preocupar em lembrar de pagar nada. O valor já fica separado automaticamente todo mês. Isso é justamente uma das vantagens do crédito consignado: mais praticidade e segurança pra você. Ficou mais claro? Podemos dar continuidade? 💚</div>
+<p><b>🔍 Por que funciona:</b> transforma a objeção em oportunidade de educar — e reposiciona a característica do produto (desconto em folha) como benefício em vez de preocupação.</p>
+</div></details>
+<details class="acc"><summary>💬 Modelos gerais de abordagem do cancelamento</summary><div class="body">
+<div class="msg">Entendo perfeitamente 😊 Antes de realizar o cancelamento, gostaria apenas de confirmar se houve alguma dúvida ou dificuldade no processo. Posso lhe auxiliar para verificarmos a melhor solução. 💚</div>
+<div class="msg">Compreendo sua decisão 😊 Sua proposta já está em andamento junto ao banco, e estamos acompanhando para que tudo ocorra da melhor forma possível. O cancelamento neste momento pode interromper as condições atuais da operação.</div>
+</div></details>
+<div class="note warn"><span class="nt">Limite da insistência</span>O objetivo nunca é insistir além do razoável. Se o cliente confirmar o cancelamento após o esclarecimento, <b>respeite a decisão</b>. A condução deve ser sempre humanizada, transparente e respeitosa.</div>
+<div class="dn-grid">
+<div class="dn do"><h4>✔ Faça</h4><ul><li>Entenda o motivo antes de argumentar</li><li>Use argumentos de valor, não de pressão</li><li>Demonstre acompanhamento personalizado</li><li>Respeite a decisão final do cliente</li></ul></div>
+<div class="dn dont"><h4>✕ Evite</h4><ul><li>Insistência excessiva ou tom de cobrança</li><li>Transmitir urgência exagerada</li><li>Invalidar a preocupação do cliente</li><li>Pressionar com consequências negativas</li></ul></div>
+</div>
+</div>
+
+<div class="section"><h2>Boas práticas no envio de áudio</h2>
+<div class="note"><span class="nt">Pilar em foco</span><b>Comunicação clara · Agilidade · Empatia</b> — áudio bem conduzido transmite mais confiança do que qualquer texto longo.</div>
+<div class="note ok"><span class="nt">⏱️ Duração ideal</span>Entre <b>30 segundos e 1 minuto</b>. Áudios longos desgastam e podem transmitir insegurança. Organize mentalmente o que vai falar <b>antes</b> de gravar.</div>
+<div class="steps">
+<div class="step"><h4>Cumprimento</h4><p>"Oi, tudo bem?" · "Bom dia, Sr(a). [Nome]"</p></div>
+<div class="step"><h4>Motivo do contato</h4><p>Explique de forma clara e objetiva o que está acontecendo com a proposta.</p></div>
+<div class="step"><h4>Acompanhamento</h4><p>"Estou acompanhando sua proposta." · "Já acionamos o suporte."</p></div>
+<div class="step"><h4>Disponibilidade</h4><p>"Qualquer dúvida, fico à disposição." · "Pode contar comigo."</p></div>
+</div>
+<div class="dn-grid">
+<div class="dn do"><h4>✔ Faça</h4><ul><li>Fale com calma e de forma objetiva</li><li>Tom profissional e acolhedor</li><li>Organize o raciocínio antes de gravar</li><li>Finalize com disponibilidade</li></ul></div>
+<div class="dn dont"><h4>✕ Evite</h4><ul><li>Áudios muito longos ou confusos</li><li>Excesso de gírias ou informalidade</li><li>Tom irritado, ansioso ou com pressa</li><li>Excesso de informações em um único áudio</li></ul></div>
+</div>
+</div>
+
+<div class="section"><h2>Referência rápida — Card de Atendimento</h2>
+<div class="dn-grid">
+<div class="dn do"><h4>✔ Sempre fazer</h4><ul>
+<li>Comunicar com clareza e empatia em toda interação</li>
+<li>Mostrar que o caso está sendo acompanhado ativamente</li>
+<li>Confirmar as informações antes de qualquer ação</li>
+<li>Identificar o motivo do cancelamento antes de argumentar</li>
+<li>Manter a calma com clientes agressivos ou irritados</li>
+<li>Explicar o motivo da solicitação de documentos</li>
+<li>Encerrar sempre com disponibilidade e cordialidade</li>
+<li>Usar argumentos de valor para conversão — nunca pressão</li>
+</ul></div>
+<div class="dn dont"><h4>✕ Nunca fazer</h4><ul>
+<li>Responder de forma seca: "está em análise", "tem que esperar"</li>
+<li>Pressionar o cliente para enviar documentos</li>
+<li>Responder no mesmo tom de um cliente agressivo</li>
+<li>Insistir excessivamente em cancelamentos</li>
+<li>Transmitir insegurança ou falta de acompanhamento</li>
+<li>Usar frases coercitivas: "sem isso não tem o que fazer"</li>
+<li>Enviar áudios longos, confusos ou em tom irritado</li>
+<li>Invalidar a preocupação ou decisão do cliente</li>
+</ul></div>
+</div>
+<div class="note"><span class="nt">Veja também</span>Os status internos da etapa Em Progresso e a nomenclatura correta para o cliente estão em <b data-go="status" style="cursor:pointer;color:var(--green);text-decoration:underline">Status da proposta</b>. A atualização automática da esteira é explicada no <b data-go="pb-robo" style="cursor:pointer;color:var(--green);text-decoration:underline">Playbook do Robô de Status</b>.</div>
+</div>
+</section>
+
+<section class="page" id="page-pb-robo">
+<div class="crumb">Playbooks · Atendimento</div><h1>Robô de Status</h1><p class="lead">Entenda como a automação apoia o time de atendimento — o que ela faz, o que ela não faz e como agir em cada situação. Ciclo de consulta: <b>a cada 30 minutos, das 7h às 18h</b>. Etapa principal: Em Progresso.</p>
+
+<div class="section"><h2>O que é o Robô de Status</h2>
+<p>Antes do robô, o time precisava consultar manualmente o status de cada proposta nos portais dos bancos e atualizar a esteira do Konsigleads — o que consumia tempo, aumentava o risco de erro e atrasava o atendimento.</p>
+<p>O Robô de Status automatiza esse processo: consulta as propostas diretamente no banco e atualiza os status na esteira de forma automática, liberando o time para focar no que realmente exige atenção humana.</p>
+<div class="dn-grid">
+<div class="dn do"><h4>O time ganha com o robô</h4><ul><li>Menos consultas manuais nos portais dos bancos</li><li>Esteira atualizada automaticamente ao longo do dia</li><li>SLA de atendimento menor</li><li>Mais tempo para o que precisa de atenção humana</li><li>Maior satisfação e transparência para o cliente</li></ul></div>
+<div class="dn dont"><h4>Sem o robô, o time enfrentava</h4><ul><li>Pesquisa manual e constante nos portais bancários</li><li>Atualização de status feita uma a uma na esteira</li><li>Atrasos no atendimento por falta de informação</li><li>Risco de divergência entre o status no banco e no sistema</li></ul></div>
+</div>
+</div>
+
+<div class="section"><h2>Como ele funciona</h2>
+<div class="steps">
+<div class="step"><h4>📋 Captura a ADE</h4><p>Identifica a ADE presente na esteira do Konsigleads.</p></div>
+<div class="step"><h4>🏦 Consulta o banco</h4><p>Busca o status atualizado da proposta diretamente no banco.</p></div>
+<div class="step"><h4>🔁 Aplica o de/para</h4><p>Mapeia o status do banco para o status correspondente no Konsigleads.</p></div>
+<div class="step"><h4>✅ Atualiza a esteira</h4><p>O acompanhamento tem seu status alterado automaticamente.</p></div>
+</div>
+<div class="note"><span class="nt">⏱️ Ciclo de consulta</span>A cada <b>30 minutos</b>, no período das <b>7h às 18h</b>. O robô busca ADEs incluídas em até <b>7 dias</b> a partir da data de criação do acompanhamento.</div>
+<details class="acc"><summary>O que é o de/para?</summary><div class="body">
+<p>Cada banco usa sua própria nomenclatura de status. O <b>de/para</b> é o mapeamento que conecta o status retornado pelo banco ao status correspondente no Konsigleads — garantindo que a atualização aconteça no lugar certo, com a descrição correta para o time e para o cliente.</p>
+<p>Quando esse mapeamento ainda não foi feito para um determinado status, o robô até encontra a informação no banco — mas não sabe para qual status atualizar no sistema. É aí que o <b>ícone amarelo</b> aparece na esteira.</p>
+</div></details>
+</div>
+
+<div class="section"><h2>Os três estados na esteira</h2>
+<p>Na esteira do Konsigleads, cada acompanhamento exibe um ícone do robô 🤖 com uma cor que indica o estado da última consulta. Saber ler essas cores é essencial para priorizar a atuação:</p>
+<div class="robot rv"><h4>🤖 Verde — retornou e atualizou com sucesso</h4><p>O robô encontrou a ADE no banco, retornou o status e o de/para estava feito. O acompanhamento foi atualizado automaticamente na esteira.</p><p><b>✓ Nenhuma ação necessária</b> — mas verifique se o novo status exige atuação do time (ex.: se mudou para Inconsistência Progresso, o atendimento deve ser acionado).</p></div>
+<div class="robot ry"><h4>🤖 Amarelo — retornou, mas sem de/para cadastrado</h4><p>O robô funcionou corretamente e encontrou o status no banco — mas não havia mapeamento de/para. O sistema não soube para qual status atualizar e o acompanhamento exibe o botão "Realizar de/para".</p><p><b>⚠️ Acionar perfil gerencial para cadastrar o de/para.</b> Até isso ser feito, o status não será atualizado automaticamente.</p></div>
+<div class="robot rr"><h4>🤖 Vermelho — não retornou, ou sem mudança de status</h4><p>Pode indicar duas situações distintas: <b>(1)</b> o robô não encontrou a ADE no banco — por ausência de ADE, digitação incorreta no Konsigleads ou ausência de credenciais configuradas; ou <b>(2)</b> o robô consultou normalmente, mas não houve mudança de status desde a última consulta.</p><p><b>🔍 Verificar a ADE e o contexto do acompanhamento antes de agir.</b></p></div>
+<div class="note warn"><span class="nt">Atenção com o vermelho</span>Não interprete automaticamente como erro. Verifique primeiro se há mudança de status esperada antes de acionar o time técnico. Em muitos casos, o vermelho apenas indica que o banco ainda não atualizou o status desde a última consulta.</div>
+</div>
+
+<div class="section"><h2>O que o robô não altera</h2>
+<p>Alguns status são <b>protegidos intencionalmente</b> — seja porque exigem análise humana, seja porque pertencem a outros setores. O robô também não atualiza status pertencentes aos setores de <b>Sales</b> e <b>Digitação</b>, independentemente do status em questão.</p>
+<p><span class="badge b-red">🔒 Reanálise Cliente</span> <span class="badge b-red">🔒 Finalizado</span> <span class="badge b-red">🔒 Cancelado</span> <span class="badge b-red">🔒 Cancelado pelo Usuário</span> <span class="badge b-red">🔒 Inconsistência Sales</span> <span class="badge b-red">🔒 Formalização Expirada (regra própria)</span></p>
+<div class="note"><span class="nt">💡 Importante</span>O robô <b>atualiza</b> acompanhamentos para <b>Inconsistência Progresso</b> — esse status é gerado automaticamente quando o banco retorna uma pendência. A partir daí, o tratamento é responsabilidade exclusiva do time de atendimento. Já a <b>Reanálise Cliente</b> não é alterada pelo robô e exige atuação manual do time.</div>
+</div>
+
+<div class="section"><h2>Melhoria em desenvolvimento 🚀</h2>
+<p>Hoje, quando uma proposta é atualizada para Inconsistência Progresso, o sistema indica apenas que existe uma pendência — sem detalhar o motivo, obrigando o time a consultar o banco manualmente. Duas melhorias estão em desenvolvimento:</p>
+<div class="tw"><table><thead><tr><th>Melhoria</th><th>O que muda</th></tr></thead><tbody>
+<tr><td><strong>🗂️ Motivo de pendência no de/para</strong></td><td>O cadastramento do de/para passará a incluir o campo Motivo de Pendência. Quando o robô atualizar para Inconsistência Progresso, o motivo específico já virá registrado automaticamente.</td></tr>
+<tr><td><strong>💬 Mensagem automática ao cliente</strong></td><td>Assim que o acompanhamento for atualizado para Inconsistência, o cliente receberá automaticamente uma mensagem informando a pendência e o que é necessário para resolvê-la.</td></tr>
+</tbody></table></div>
+<p><b>Na prática:</b> menos consultas manuais para identificar o motivo da pendência · informação mais clara já disponível na esteira · cliente notificado antes mesmo do contato ativo · redução de SLA e de contatos desnecessários · mais foco nas pendências que realmente precisam de atuação humana.</p>
+</div>
+
+<div class="section"><h2>Referência rápida — Card do Robô de Status</h2>
+<div class="dn-grid">
+<div class="dn do"><h4>✔ Lembre sempre</h4><ul>
+<li>O robô consulta a cada 30 min, das 7h às 18h</li>
+<li>Verde = atualizado automaticamente; verificar próximo passo</li>
+<li>Amarelo = robô funcionou, mas de/para está pendente</li>
+<li>Vermelho = sem retorno OU sem mudança de status — verificar contexto</li>
+<li>Status protegidos exigem atuação manual do time</li>
+<li>Inconsistência Progresso é gerada pelo robô — tratamento é do time</li>
+<li>Reanálise Cliente não é alterada pelo robô — atuação manual obrigatória</li>
+<li>Em breve: motivo de pendência automático + mensagem ao cliente</li>
+</ul></div>
+<div class="dn dont"><h4>✕ Evite</h4><ul>
+<li>Interpretar vermelho sempre como erro técnico</li>
+<li>Ignorar o ícone amarelo — o de/para precisa ser feito</li>
+<li>Esperar o robô atualizar status protegidos — ele não faz isso</li>
+<li>Atualizar manualmente o que o robô já atualizou (verde)</li>
+<li>Acionar o time técnico sem antes verificar a ADE no acompanhamento</li>
+</ul></div>
+</div>
+<div class="note"><span class="nt">Veja também</span>O funil completo e as automações de troca de status estão em <b data-go="konsigleads" style="cursor:pointer;color:var(--green);text-decoration:underline">Konsigleads (CRM)</b>. O tratamento das pendências da etapa está no <b data-go="pb-emprogresso" style="cursor:pointer;color:var(--green);text-decoration:underline">Playbook Em Progresso</b>.</div>
+</div>
+</section>
+
+<section class="page" id="page-bancos">
+  <div class="crumb">Operação · Suporte</div>
+  <h1>Canais de atendimento dos bancos</h1>
+  <p class="lead">Telefones, SAC, ouvidoria e WhatsApp dos bancos parceiros. Use a busca para encontrar rapidamente por nome ou código do banco.</p>
+  <div class="bank-tools">
+    <input type="text" id="bankSearch" placeholder="🔎 Buscar banco por nome ou código…" autocomplete="off">
+  </div>
+  <div class="bank-grid" id="bankGrid"></div>
+</section>
+<!-- ============ AUTOMAÇÕES BANCÁRIAS ============ -->
+<section class="page" id="page-automacoes">
+  <div class="crumb">Operação · Robô de Autodigitação</div>
+  <h1>Robô de Autodigitação</h1>
+  <p class="lead">Mapa de automações bancárias ativas na Konsi — relação de bancos com digitação automática e cobertura por convênio e tipo de operação.</p>
+
+  <div class="note"><span class="nt">Legenda</span><span class="badge b-green">✅ Ativo</span> &nbsp; <span class="badge b-amber">⚠️ Suspensa temporariamente</span></div>
+
+  <div class="section">
+    <h2>Bancos com automação ativa</h2>
+    <div class="tw"><table>
+      <thead><tr><th>#</th><th>Banco</th><th>Status</th><th>Operações automatizadas</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><strong>2010 / UY3 SCD S/A</strong></td><td><span class="badge b-green">✅ Ativo</span></td><td>Consignado CLT</td></tr>
+        <tr><td>2</td><td><strong>Banco Digio</strong></td><td><span class="badge b-green">✅ Ativo</span></td><td>Crédito Novo</td></tr>
+        <tr><td>3</td><td><strong>BCO Digimais S.A.</strong></td><td><span class="badge b-green">✅ Ativo</span></td><td>Crédito Novo <span class="badge b-amber">⚠️ susp. temp.</span> · Saque Cartão Benefícios · Saque Cartão Consignado · Consignado CLT</td></tr>
+        <tr><td>4</td><td><strong>BCO Mercantil do Brasil S.A.</strong></td><td><span class="badge b-green">✅ Ativo</span></td><td>Crédito Novo · Consignado CLT</td></tr>
+        <tr><td>5</td><td><strong>BCO Pine S.A.</strong></td><td><span class="badge b-green">✅ Ativo</span></td><td>Saque Cartão Benefícios · Saque Cartão Consignado</td></tr>
+        <tr><td>6</td><td><strong>BMG</strong></td><td><span class="badge b-green">✅ Ativo</span></td><td>Crédito Novo</td></tr>
+        <tr><td>7</td><td><strong>Facta</strong></td><td><span class="badge b-green">✅ Ativo</span></td><td>Consignado CLT</td></tr>
+        <tr><td>8</td><td><strong>Hope Consig</strong></td><td><span class="badge b-green">✅ Ativo</span></td><td>Crédito Novo · Saque Cartão Benefícios</td></tr>
+        <tr><td>9</td><td><strong>Meucash</strong></td><td><span class="badge b-green">✅ Ativo</span></td><td>Saque Cartão Benefícios · Saque Cartão Consignado</td></tr>
+        <tr><td>10</td><td><strong>Pan</strong></td><td><span class="badge b-green">✅ Ativo</span></td><td>Crédito Novo</td></tr>
+        <tr><td>11</td><td><strong>Pine</strong></td><td><span class="badge b-green">✅ Ativo</span></td><td>Saque Cartão Benefícios · Saque Cartão Consignado</td></tr>
+        <tr><td>12</td><td><strong>Safra</strong></td><td><span class="badge b-green">✅ Ativo</span></td><td>Crédito Novo</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="section">
+    <h2>Automações ativas por convênio</h2>
+    <p>Convênios cobertos: <strong>Bahia · Gov. São Paulo · Pref. São Paulo · Minas Gerais · Pernambuco · Alagoas</strong></p>
+
+    <!-- GOV BA -->
+    <div class="sector-block">
+      <div class="sector-head" style="background:#04513F">🏛️ GOV BA — Governo da Bahia</div>
+      <div class="sector-body">
+        <div class="tw" style="margin:12px 0"><table>
+          <thead><tr><th>Tipo de operação</th><th>Bancos com automação</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Crédito Novo</strong></td><td>SAFRA · DIGIO · HOPE · PAN</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- GOV SP -->
+    <div class="sector-block">
+      <div class="sector-head" style="background:#0A6E58">🏛️ GOV SP — Governo de São Paulo</div>
+      <div class="sector-body">
+        <h3>↳ SEFAZ</h3>
+        <div class="tw" style="margin:8px 0 16px"><table>
+          <thead><tr><th>Tipo de operação</th><th>Bancos com automação</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Crédito Novo</strong></td><td>SAFRA · BMG · HOPE · PAN</td></tr>
+            <tr><td><strong>Cartão Benefícios</strong></td><td>DIGIMAIS · PINE</td></tr>
+            <tr><td><strong>Cartão Consignado</strong></td><td>DIGIMAIS · PINE</td></tr>
+          </tbody>
+        </table></div>
+        <h3>↳ SPPREV</h3>
+        <div class="tw" style="margin:8px 0 16px"><table>
+          <thead><tr><th>Tipo de operação</th><th>Bancos com automação</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Crédito Novo</strong></td><td>SAFRA · BMG · PAN · HOPE</td></tr>
+            <tr><td><strong>Cartão Benefícios</strong></td><td>PINE</td></tr>
+            <tr><td><strong>Cartão Consignado</strong></td><td>PINE</td></tr>
+          </tbody>
+        </table></div>
+        <h3>↳ PMESP / CBMESP</h3>
+        <div class="tw" style="margin:8px 0 16px"><table>
+          <thead><tr><th>Tipo de operação</th><th>Bancos com automação</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Crédito Novo</strong></td><td>SAFRA · BMG · HOPE · PAN</td></tr>
+            <tr><td><strong>Cartão Benefícios</strong></td><td>DIGIMAIS · PINE</td></tr>
+            <tr><td><strong>Cartão Consignado</strong></td><td>DIGIMAIS · PINE</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- PREF SP -->
+    <div class="sector-block">
+      <div class="sector-head" style="background:#0A9F82">🏛️ PREF SP — Prefeitura de São Paulo</div>
+      <div class="sector-body">
+        <div class="tw" style="margin:12px 0"><table>
+          <thead><tr><th>Tipo de operação</th><th>Bancos com automação</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Crédito Novo</strong></td><td>BMG · SAFRA · HOPE · PAN</td></tr>
+            <tr><td><strong>Cartão Benefícios</strong></td><td>DIGIMAIS · PINE</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- GOV MG -->
+    <div class="sector-block">
+      <div class="sector-head" style="background:#0D94C7">🏛️ GOV MG — Governo de Minas Gerais</div>
+      <div class="sector-body">
+        <h3>↳ SEPLAG</h3>
+        <div class="tw" style="margin:8px 0 16px"><table>
+          <thead><tr><th>Tipo de operação</th><th>Bancos com automação</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Crédito Novo</strong></td><td>BMG <span class="badge b-amber">⚠️ susp. temp.</span> · DIGIO · HOPE · PAN</td></tr>
+            <tr><td><strong>Cartão Benefícios</strong></td><td>PINE</td></tr>
+            <tr><td><strong>Cartão Consignado</strong></td><td>PINE</td></tr>
+          </tbody>
+        </table></div>
+        <h3>↳ PMMG <span class="badge b-amber" style="font-size:11px">⚠️ Suspenso temporariamente</span></h3>
+        <div class="tw" style="margin:8px 0 16px"><table>
+          <thead><tr><th>Tipo de operação</th><th>Bancos com automação</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Crédito Novo</strong></td><td>PAN · DIGIO · HOPE</td></tr>
+            <tr><td><strong>Cartão Benefícios</strong></td><td>PINE</td></tr>
+            <tr><td><strong>Cartão Consignado</strong></td><td>PINE</td></tr>
+          </tbody>
+        </table></div>
+        <h3>↳ CBMMG</h3>
+        <div class="tw" style="margin:8px 0 16px"><table>
+          <thead><tr><th>Tipo de operação</th><th>Bancos com automação</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Crédito Novo</strong></td><td>BMG · DIGIO · HOPE</td></tr>
+            <tr><td><strong>Cartão Benefícios</strong></td><td>PINE</td></tr>
+            <tr><td><strong>Cartão Consignado</strong></td><td>PINE</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- GOV PE -->
+    <div class="sector-block">
+      <div class="sector-head" style="background:#5B3E9E">🏛️ GOV PE — Governo de Pernambuco</div>
+      <div class="sector-body">
+        <div class="tw" style="margin:12px 0"><table>
+          <thead><tr><th>Tipo de operação</th><th>Bancos com automação</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Crédito Novo</strong></td><td>DIGIO · HOPE</td></tr>
+            <tr><td><strong>Cartão Benefícios</strong></td><td>PINE</td></tr>
+            <tr><td><strong>Cartão Consignado</strong></td><td>HOPE</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- GOV AL -->
+    <div class="sector-block">
+      <div class="sector-head" style="background:#7A3E1E">🏛️ GOV AL — Governo de Alagoas</div>
+      <div class="sector-body">
+        <div class="tw" style="margin:12px 0"><table>
+          <thead><tr><th>Tipo de operação</th><th>Bancos com automação</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Crédito Novo</strong></td><td>DIGIO · PAN</td></tr>
+            <tr><td><strong>Cartão Benefícios</strong></td><td>MEUCASH · PINE</td></tr>
+            <tr><td><strong>Cartão Consignado</strong></td><td>—</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Observações técnicas</h2>
+    <div class="note warn"><span class="nt">Lecca</span>Scrapper ativo, operando somente para <strong>criação comercial</strong>.</div>
+    <div class="note warn"><span class="nt">Capital Consig</span>API ativa, operando somente para <strong>criação manual</strong>.</div>
+  </div>
+</section>
+
+<script>
+const BANKS=[{"name": "Agibank", "code": "121", "rows": [{"l": "Capitais", "v": "3004-2221"}, {"l": "Demais loc.", "v": "0800 602 0022"}]}, {"name": "Alfa", "code": "025", "rows": [{"l": "Capitais", "v": "4004-3344"}, {"l": "Demais loc.", "v": "0800 725 3344"}, {"l": "Def. auditivo", "v": "0800 770 5244"}, {"l": "E-mail", "v": "alfaline@bancoalfa.com.br"}]}, {"name": "Banco do Brasil", "code": "001", "rows": [{"l": "Capitais", "v": "4004-0001"}, {"l": "Demais loc.", "v": "0800 729 0001"}, {"l": "Obs.", "v": "Empréstimos › Consultas › Extrato"}]}, {"name": "Banrisul", "code": "041", "rows": [{"l": "Porto Alegre", "v": "(51) 3210-0122"}, {"l": "Demais loc.", "v": "0800 541 8855"}, {"l": "WhatsApp", "v": "(51) 3215-1800"}]}, {"name": "Bari", "code": "330", "rows": [{"l": "Capitais", "v": "4007-2628"}, {"l": "Demais loc.", "v": "0800 602 7007"}, {"l": "E-mail", "v": "ajuda@bancobari.com.br"}]}, {"name": "Blue Assist", "code": "—", "rows": [{"l": "WhatsApp", "v": "(11) 3003-4521"}, {"l": "E-mail", "v": "suporte@blueassist.com.br"}]}, {"name": "BMG", "code": "318", "rows": [{"l": "Celular", "v": "4002-7007"}, {"l": "Fixo", "v": "0800 770 1790"}, {"l": "WhatsApp", "v": "(11) 3003-3955"}]}, {"name": "BNP Paribas", "code": "755", "rows": [{"l": "Tel 1", "v": "(11) 3841-3100"}, {"l": "Tel 2", "v": "(11) 2360-3100"}]}, {"name": "Bradesco", "code": "237", "rows": [{"l": "Capitais", "v": "4002-0022"}, {"l": "Demais loc.", "v": "0800 570 0022"}, {"l": "Def. auditivo", "v": "0800 722 0099"}]}, {"name": "Bradesco Financiamento", "code": "394", "rows": [{"l": "Capitais", "v": "4004-4433"}, {"l": "Demais loc.", "v": "0800 722 4433"}]}, {"name": "C6 Bank", "code": "336", "rows": [{"l": "Capitais", "v": "3003-6116"}, {"l": "Demais loc.", "v": "0800 660 6116"}, {"l": "WhatsApp", "v": "(11) 2832-6088"}]}, {"name": "Caixa Econômica", "code": "104", "rows": [{"l": "Capitais", "v": "4004-0104"}, {"l": "Demais loc.", "v": "0800 104 0104"}, {"l": "WhatsApp", "v": "0800 104 0104"}]}, {"name": "Capital Consig", "code": "—", "rows": [{"l": "Telefone", "v": "(11) 4210-2496"}, {"l": "E-mail", "v": "contato@capitalconsig.com.br"}]}, {"name": "Crefisa", "code": "069", "rows": [{"l": "Central", "v": "(11) 3003-3376"}, {"l": "WhatsApp", "v": "0800 273 3376"}, {"l": "SAC", "v": "0800 727 4884"}, {"l": "Ouvidoria", "v": "0800 703 8891"}]}, {"name": "Crefaz", "code": "—", "rows": [{"l": "SAC", "v": "0800 052 5051"}, {"l": "Ouvidoria", "v": "0800 067 5757"}, {"l": "E-mail", "v": "ouvidoria@crefaz.com.br"}]}, {"name": "Daycoval", "code": "707", "rows": [{"l": "Central", "v": "0300 111 0500"}, {"l": "SAC", "v": "0800 775 0500"}, {"l": "Ouvidoria", "v": "0800 777 0900"}, {"l": "WhatsApp", "v": "(11) 99111-6583"}]}, {"name": "Digio", "code": "335", "rows": [{"l": "Capitais", "v": "3003-8734"}, {"l": "Demais loc.", "v": "0800 333 8734"}, {"l": "Ouvidoria", "v": "0800 333 1474"}]}, {"name": "Facta Financeira", "code": "149", "rows": [{"l": "WhatsApp demais", "v": "(51) 3021-7833"}, {"l": "WhatsApp CLT", "v": "0800 942 0462"}, {"l": "SAC", "v": "sac.factafinanceira.com.br"}]}, {"name": "Hope Asset", "code": "—", "rows": [{"l": "Telefones", "v": "(11) 3125-1000 / 3125-1001"}, {"l": "E-mail", "v": "hopeasset@hopeasset.com.br"}]}, {"name": "Inbursa", "code": "012", "rows": [{"l": "Capitais", "v": "(11) 3030-4444"}, {"l": "Demais loc.", "v": "0800 641-4444"}]}, {"name": "Inter", "code": "077", "rows": [{"l": "Capitais", "v": "3003-4070"}, {"l": "Demais loc.", "v": "0800 940-0007"}, {"l": "Obs.", "v": "App › Empréstimo › Consignado › Contratos"}]}, {"name": "Itaú", "code": "341", "rows": [{"l": "Capitais", "v": "4004-4828"}, {"l": "Demais loc.", "v": "0800 970-4828"}, {"l": "Exterior", "v": "+55 11 4004-4828"}, {"l": "SAC", "v": "0800 728 0728"}]}, {"name": "Itaú Consignados", "code": "341", "rows": [{"l": "Capitais", "v": "4004-4828"}, {"l": "Demais loc.", "v": "0800 970-4828"}, {"l": "SAC", "v": "0800 724 2101"}, {"l": "Ouvidoria", "v": "0800 570 0011"}, {"l": "WhatsApp", "v": "(11) 5225-0828"}]}, {"name": "Kardbank", "code": "—", "rows": [{"l": "Central", "v": "0800 015 0001"}]}, {"name": "Master (Credcesta)", "code": "243", "rows": [{"l": "Capitais", "v": "4003-4952"}, {"l": "Demais loc.", "v": "0800 881-0001"}, {"l": "SAC", "v": "0800 729 0779"}, {"l": "Ouvidoria", "v": "0800 099 9088"}]}, {"name": "Master", "code": "243", "rows": [{"l": "Capitais", "v": "4003-4952"}, {"l": "Demais loc.", "v": "0800 881-0001"}, {"l": "SAC", "v": "0800 729 0779"}, {"l": "Ouvidoria", "v": "0800 729 1710"}]}, {"name": "Mercantil", "code": "389", "rows": [{"l": "WhatsApp/SAC", "v": "0800 7070 398"}, {"l": "Ouvidoria", "v": "0800 7070 384"}]}, {"name": "Meu Cash Card", "code": "—", "rows": [{"l": "Central", "v": "4003-7688"}, {"l": "E-mail", "v": "faleconosco@meucashcard.com.br"}]}, {"name": "Nubank", "code": "260", "rows": [{"l": "Capitais", "v": "4020-0185"}, {"l": "Demais loc.", "v": "0800 591 2117"}]}, {"name": "Olé", "code": "169", "rows": [{"l": "Capitais", "v": "3003-4324"}, {"l": "Demais loc.", "v": "0800 709-1234"}, {"l": "SAC", "v": "0800 726-7454"}, {"l": "Ouvidoria", "v": "0800 726-7404"}]}, {"name": "Pan", "code": "623", "rows": [{"l": "Capitais", "v": "4002-1687"}, {"l": "Demais loc.", "v": "0800 775-8686"}, {"l": "WhatsApp", "v": "(11) 4003-0101"}, {"l": "SAC", "v": "0800 776-8000"}]}, {"name": "Paraná Banco", "code": "254", "rows": [{"l": "SAC", "v": "0800 645 6090"}]}, {"name": "Parati", "code": "133", "rows": [{"l": "Telefone", "v": "(27) 2123-4777"}, {"l": "E-mail", "v": "sac@parati-cfi.com.br"}]}, {"name": "Paulista", "code": "654", "rows": [{"l": "Telefone", "v": "(11) 3299-2000"}, {"l": "E-mail", "v": "sac@bancopaulista.com.br"}]}, {"name": "PH Tech", "code": "—", "rows": [{"l": "WhatsApp", "v": "(11) 4765-1700"}]}, {"name": "PicPay", "code": "380", "rows": [{"l": "SAC", "v": "0800 025 8000"}, {"l": "Ouvidoria", "v": "0800 025 2000"}]}, {"name": "Pine (Amigoz)", "code": "643", "rows": [{"l": "SAC", "v": "0800 942 1702"}, {"l": "Empréstimos", "v": "0800 772 5283"}, {"l": "Cartão Amigoz", "v": "0800 772 5271"}, {"l": "Ouvidoria", "v": "0800 725 7463"}]}, {"name": "Prata Digital", "code": "—", "rows": [{"l": "Telefone", "v": "(21) 3942-0070"}, {"l": "WhatsApp", "v": "wa.me/552139422489"}]}, {"name": "Safra", "code": "422", "rows": [{"l": "Central", "v": "0300 151 1234"}, {"l": "WhatsApp", "v": "(11) 2650-9999"}]}, {"name": "Santander", "code": "033", "rows": [{"l": "Capitais", "v": "4001-4451"}, {"l": "Demais loc.", "v": "0800 728-4451"}, {"l": "SAC", "v": "0800 726-4551"}, {"l": "Def. auditivo", "v": "0800 771-0301"}]}, {"name": "PagSeguro", "code": "290", "rows": [{"l": "Capitais", "v": "4003-1775"}, {"l": "Demais loc.", "v": "0800 728-2174"}, {"l": "Ouvidoria", "v": "0800 728-2167"}]}, {"name": "Senff", "code": "—", "rows": [{"l": "Telefone", "v": "0800 595 0595"}, {"l": "WhatsApp", "v": "0800 595 0595"}, {"l": "E-mail", "v": "atendimento@senff.com.br"}]}, {"name": "Sicoob", "code": "756", "rows": [{"l": "Capitais", "v": "4000 1111"}, {"l": "Demais loc.", "v": "0800 642 0000"}, {"l": "Def. auditivo", "v": "0800 940 0458"}]}, {"name": "Sicredi", "code": "748", "rows": [{"l": "Telefone", "v": "0800 724 7220"}, {"l": "Def. auditivo", "v": "0800 724 0525"}, {"l": "WhatsApp", "v": "(51) 3358-4770"}]}, {"name": "Vemcard", "code": "—", "rows": [{"l": "Telefone", "v": "0800 591 8687"}, {"l": "WhatsApp", "v": "(11) 99781-8983"}, {"l": "E-mail", "v": "sac@vemcard.com.br"}]}, {"name": "Will Bank", "code": "280", "rows": [{"l": "Central", "v": "3003-2593"}, {"l": "SAC", "v": "0800 772 1026"}, {"l": "Ouvidoria", "v": "0800 945 2265"}]}];
+
+// ---------- Bank rendering ----------
+function renderBanks(filter){
+  const grid=document.getElementById('bankGrid');
+  const f=(filter||'').trim().toLowerCase();
+  const list=BANKS.filter(b=> !f || b.name.toLowerCase().includes(f) || b.code.toLowerCase().includes(f));
+  if(!list.length){ grid.innerHTML='<div class="no-res">Nenhum banco encontrado para "'+filter+'".</div>'; return; }
+  grid.innerHTML=list.map(b=>{
+    const code = b.code && b.code!=='—' ? '<span class="code">cód. '+b.code+'</span>' : '';
+    const rows=b.rows.map(r=>'<div class="row"><span class="lab">'+r.l+'</span><span class="val">'+r.v+'</span></div>').join('');
+    return '<div class="bcard"><h4>'+b.name+code+'</h4>'+rows+'</div>';
+  }).join('');
+}
+
+// ---------- Routing ----------
+const pages=document.querySelectorAll('.page');
+const navItems=document.querySelectorAll('.nav a.item');
+function showPage(id){
+  pages.forEach(p=>p.classList.toggle('active', p.id==='page-'+id));
+  navItems.forEach(a=>a.classList.toggle('active', a.dataset.page===id));
+  window.scrollTo({top:0,behavior:'instant'});
+  if(id==='bancos') renderBanks(document.getElementById('bankSearch').value);
+  closeMobile();
+  if(location.hash!=='#'+id) history.replaceState(null,'','#'+id);
+}
+navItems.forEach(a=>a.addEventListener('click',()=>showPage(a.dataset.page)));
+document.querySelectorAll('[data-go]').forEach(el=>el.addEventListener('click',()=>showPage(el.dataset.go)));
+
+// ---------- Bank search ----------
+document.getElementById('bankSearch').addEventListener('input',e=>renderBanks(e.target.value));
+
+// ---------- Mobile menu ----------
+const sidebar=document.getElementById('sidebar'), backdrop=document.getElementById('backdrop');
+function closeMobile(){ sidebar.classList.remove('open'); backdrop.classList.remove('show'); }
+document.getElementById('menuBtn').addEventListener('click',()=>{ sidebar.classList.add('open'); backdrop.classList.add('show'); });
+backdrop.addEventListener('click',closeMobile);
+
+// ---------- Global search ----------
+const gs=document.getElementById('globalSearch');
+let cleared=false;
+function clearHighlights(){
+  document.querySelectorAll('mark.gsh').forEach(m=>{ const t=document.createTextNode(m.textContent); m.parentNode.replaceChild(t,m); m.parentNode.normalize&&m.parentNode.normalize(); });
+}
+function pageText(p){ return (p.textContent||'').toLowerCase(); }
+gs.addEventListener('input',function(){
+  const q=this.value.trim().toLowerCase();
+  clearHighlights();
+  navItems.forEach(a=>a.style.display='');
+  document.querySelectorAll('.nav-group').forEach(g=>g.style.display='');
+  if(q.length<2){ return; }
+  // Filter nav to pages that contain the query
+  let firstMatch=null;
+  navItems.forEach(a=>{
+    const pid=a.dataset.page;
+    const pg=document.getElementById('page-'+pid);
+    const has = pg && pageText(pg).includes(q);
+    a.style.display = has ? '' : 'none';
+    if(has && !firstMatch) firstMatch=pid;
+  });
+  // hide empty groups
+  document.querySelectorAll('.nav-group').forEach(g=>{
+    const vis=[...g.querySelectorAll('a.item')].some(a=>a.style.display!=='none');
+    g.style.display=vis?'':'none';
+  });
+});
+gs.addEventListener('keydown',function(e){
+  if(e.key==='Enter'){
+    const first=[...navItems].find(a=>a.style.display!=='none');
+    if(first){ showPage(first.dataset.page); highlightIn(document.getElementById('page-'+first.dataset.page), this.value.trim()); }
+  }
+});
+function highlightIn(container,q){
+  if(!q||q.length<2) return;
+  clearHighlights();
+  const rx=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+  const walker=document.createTreeWalker(container,NodeFilter.SHOW_TEXT,{acceptNode:n=>{
+    if(!n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+    const p=n.parentNode.nodeName; if(['SCRIPT','STYLE','MARK'].includes(p)) return NodeFilter.FILTER_REJECT;
+    return rx.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT;
+  }});
+  const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(n=>{
+    const span=document.createElement('span');
+    span.innerHTML=n.nodeValue.replace(rx,'<mark class="gsh">$1</mark>');
+    n.parentNode.replaceChild(span,n);
+  });
+  const firstMark=container.querySelector('mark.gsh');
+  if(firstMark) firstMark.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+// ---------- Init from hash ----------
+const initial=(location.hash||'#home').replace('#','');
+const valid=[...navItems].some(a=>a.dataset.page===initial);
+showPage(valid?initial:'home');
+renderBanks('');
+</script>
+</body>
+</html>
